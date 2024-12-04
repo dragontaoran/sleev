@@ -118,7 +118,7 @@ where $P( \cdot )$ and $P\left( \cdot | \cdot \right)$ denote density
 and conditional density functions, respectively.
 $P_{\mathbf{\theta}}\left( Y|\mathbf{X} \right)$ then refers to the
 conditional density function of
-$Y = \alpha + \mathbf{X}\boldsymbol{\beta} + \epsilon$. Denote the validation
+$Y = \alpha +  \boldsymbol{\beta}^{T}\mathbf{X} + \epsilon$. Denote the validation
 indicator variable by $V$, with $V = 1$ indicating that a record was
 validated and $V = 0$ otherwise. For records with $V = 0$, their
 measurement errors $\left( W,\mathbf{U} \right)$ are missing, and

@@ -94,7 +94,7 @@ The SMLEs for logistic regression are similar to linear regression and
 described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).Suppose that we want to fit
 a standard linear regression model for a continuous outcome $Y$ and
 covariates $\mathbf{X}$:
-$Y = \alpha + \mathbf{\beta}^{T}\mathbf{X} + \epsilon$, where
+$Y = \alpha + \bm{\beta}^{T}\mathbf{X} + \epsilon$, where
 $\epsilon\sim N({0,\sigma}^{2})$. Our goal is to obtain estimates of
 ${\mathbf{\theta} = (\alpha,\mathbf{\beta}^{T},\sigma^{2})}^{T}$. When
 we have error-prone data, $Y$ and $\mathbf{X}$ are unobserved except for
@@ -118,7 +118,7 @@ where $P( \cdot )$ and $P\left( \cdot | \cdot \right)$ denote density
 and conditional density functions, respectively.
 $P_{\mathbf{\theta}}\left( Y|\mathbf{X} \right)$ then refers to the
 conditional density function of
-$Y = \alpha + \mathbf{X\beta} + \epsilon$. Denote the validation
+$Y = \alpha + \mathbf{X}\pmb{\beta} + \epsilon$. Denote the validation
 indicator variable by $V$, with $V = 1$ indicating that a record was
 validated and $V = 0$ otherwise. For records with $V = 0$, their
 measurement errors $\left( W,\mathbf{U} \right)$ are missing, and

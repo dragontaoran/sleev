@@ -65,6 +65,7 @@ editor:
     wrap: 72
 execute: 
   cache: true
+  warning: false
 ---
 
 ```{r setup, include=FALSE}
@@ -229,7 +230,7 @@ can be found in @Tao2021.
 # 3. Sieve maximum likelihood estimators for logistic regression
 
 For a binary outcome $Y$, we fit a logistic regression model
-$P_{\pmb{\theta}}(Y=1|\mathbf{X})=\left[1+\exp\{-(\alpha+\pmb{\beta}^{\textup T}\mathbf{X})\}\right]^{-1}$
+$$P_{\pmb{\theta}}(Y=1|\mathbf{X})=\left[1+\exp\{-(\alpha+\pmb{\beta}^{\text T}\mathbf{X})\}\right]^{-1}$$
 with parameters
 $\pmb{\theta} = (\alpha, \pmb{\beta}^{\textup T})^{\textup T}$. The
 joint density of $(Y^*,\pmb{X}^*,Y,\pmb{X})$ is \begin{align}
@@ -446,7 +447,8 @@ described B-spline basis is constructed as follows.
 ```{r}
 n <- nrow(mock.vccc) # get the number of rows of the dataset
 sn <- 20 # set the size of the B-spline basis
-# portion the size of the B-spline basis according to the size of two sex groups
+# portion the size of the B-spline basis according to the 
+# size of two sex groups
 sex_ratio <- sum(mock.vccc$Sex==0)/n
 sn_0 <- round(sn*sex_ratio, digits = 0)
 sn_1 <- sn-sn_0
@@ -484,7 +486,8 @@ res_linear <- linear2ph(Y_unval="CD4_unval_sq10", Y="CD4_val_sq10",
                         Bspline=colnames(Bspline), data=data,
                         hn_scale = 1, noSE = FALSE, TOL = 1e-04, 
                         MAX_ITER = 1000, verbose = FALSE)
-paste0("Run time: ", round(Sys.time()-start.time, 3), " min")
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 ```
 
 The fitted SMLEs are stored in a `list` object, denoted by `res_linear`
@@ -580,8 +583,8 @@ folds is set to be five.
 set.seed(1) 
 # different B-spline sizes
 sns <- c(15, 20, 25, 30, 35, 40) 
-# vector to hold mean log-likelihood for each sn
-pred_loglike.1 <- rep(NA, length(sns)) 
+# vector to hold mean log-likelihood and run time for each sn
+pred_loglike.1 <- run.time.mins <- rep(NA, length(sns)) 
 # get number of rows of the dataset
 n <- nrow(mock.vccc) 
 # specify number of folds in the cross validation
@@ -604,12 +607,14 @@ for (i in 1:length(sns)) {
   data.sieve <- data.frame(cbind(mock.vccc, Bspline))
   
   # cross validation, produce mean log-likelihood
+  start.time <- Sys.time()
   res.1 <- cv_linear2ph(Y="CD4_val_sq10", Y_unval="CD4_unval_sq10",
                         X="VL_val_l10", X_unval="VL_unval_l10", Z="Sex",
                         Bspline=colnames(Bspline), data=data.sieve, 
                         nfolds=k, MAX_ITER = 2000, TOL = 1e-04, 
                         verbose = FALSE)
-                    
+  # save run time
+  run.time.mins[i] <- difftime(Sys.time(), start.time, units = "mins")
   # save mean log-likelihood result                  
   pred_loglike.1[i] <- res.1$avg_pred_loglik
 }
@@ -623,7 +628,7 @@ maxns <- sns[which.max(pred_loglike.1)]
 ```
 
 ```{r}
-out <- data.frame(sns, pred_loglike.1)
+out <- data.frame(sns, pred_loglike.1, run.time.mins)
 options(digits = 6)
 print(out, row.names = FALSE)
 ```
@@ -654,15 +659,18 @@ Bspline[mock.vccc$Sex==0,1:sn_0] <- Bspline_0
 Bspline[mock.vccc$Sex==1,(sn_0+1):sn] <- Bspline_1
 colnames(Bspline) <- paste("bs", 1:sn, sep="")
 data.sieve <- data.frame(cbind(mock.vccc, Bspline))
-Bspline <- splines::bs(mock.vccc$VL_unval_l10, df=sn, degree=3, intercept=TRUE)
+Bspline <- splines::bs(mock.vccc$VL_unval_l10, df=sn, degree=3, 
+                       intercept=TRUE)
 colnames(Bspline) <- paste("bs", 1:sn, sep="")
 data.sieve <- cbind(mock.vccc, Bspline)
+start.time <- Sys.time()
 fit.sn.35 <- linear2ph(Y="CD4_val_sq10", Y_unval="CD4_unval_sq10",
                        X="VL_val_l10", X_unval="VL_unval_l10", Z="Sex", 
                        Bspline=colnames(Bspline), data=data.sieve, 
                        hn_scale = 1, noSE = FALSE, TOL = 1e-04, 
                        MAX_ITER = 1000, verbose = FALSE)
-
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 # compare the coefficients to those from Section 4.3.2
 res_linear$coefficients
 fit.sn.35$coefficients
@@ -762,7 +770,8 @@ res_linear = linear2ph(Y="CD4_val_sq10", Y_unval="CD4_unval_sq10",
                        Z=c("Age", "Sex"), Bspline=colnames(Bspline),
                        data=data, hn_scale = 1/4, noSE = FALSE,
                        TOL = 1e-04, MAX_ITER = 1000,verbose = FALSE)
-paste0("Run time: ", round(Sys.time()-start.time, 3), " min")
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 res_linear$coefficients
 ```
 
@@ -809,7 +818,8 @@ res_linear = linear2ph(Y="CD4_val_sq10", Y_unval="CD4_unval_sq10",
                        Z=c("Age", "Sex"), Bspline=colnames(Bspline), 
                        data=data, hn_scale = 1/4, noSE = FALSE, 
                        TOL = 1e-04, MAX_ITER = 1000, verbose = FALSE)
-paste0("Run time: ", round(Sys.time()-start.time, 3), " min")
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 res_linear$coefficients
 ```
 
@@ -861,7 +871,8 @@ res_logistic <- logistic2ph(Y="ADE_val", Y_unval="ADE_unval",
                             Z="prior_ART", Bspline=colnames(Bspline),
                             data=data, hn_scale=1/2, noSE = FALSE, 
                             TOL = 1e-04, MAX_ITER = 1000, verbose = FALSE)
-paste0("Run time: ", round(Sys.time()-start.time, 3), " min")
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 ```
 
 The arguments here are analogous to those of `res_linear`. Argument
@@ -887,7 +898,8 @@ of 250 cells/mm$^3$. A 95% confidence interval for this odds ratio,
 computed in the usual manner, is
 
 ```{r}
-exp(res_logistic$coefficients[2,1]+c(-1,1)*1.96*res_logistic$coefficients[2,2])
+exp(res_logistic$coefficients[2,1]+
+      c(-1,1)*1.96*res_logistic$coefficients[2,2])
 ```
 
 After adjusting for CD4 count, the estimated odds ratio for having an
@@ -895,7 +907,8 @@ ADE within one year for ART naive patients versus patients not ART naive
 is $exp(-0.254)=0.776$, and the 95% confidence interval is
 
 ```{r}
-exp(res_logistic$coefficients[3,1]+c(-1,1)*1.96*res_logistic$coefficients[3,2])
+exp(res_logistic$coefficients[3,1]+
+      c(-1,1)*1.96*res_logistic$coefficients[3,2])
 ```
 
 Based on these results, the association between having ADE within one

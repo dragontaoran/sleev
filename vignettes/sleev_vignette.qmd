@@ -144,7 +144,7 @@ the package with a detailed illustration using simulated HIV data
 
 Suppose that we want to fit a standard linear regression model for a
 continuous outcome $Y$ and vector of covariates $\pmb{X}$:
-$Y=\alpha+\pmb{\beta}^{\textup T}\mathbf{X}+\epsilon$, where $\epsilon$
+$Y=\alpha+\pmb{\beta}^{\text T}\mathbf{X}+\epsilon$, where $\epsilon$
 follows a normal distribution with mean zero and variance $\sigma^2$.
 Our goal is to obtain estimates of
 $\pmb{\theta=}(\alpha,\pmb{\beta}^{\textup T}, \sigma^2)^{\textup T}$.
@@ -172,7 +172,7 @@ $$= P_{\pmb{\theta}}(Y|\pmb{X})P(W,\pmb{U}|\pmb{X}^{\pmb{*}})P(\pmb{X}^{\pmb{*}}
 where $P(\cdot)$ and $P(\cdot|\cdot)$ denote density and conditional
 density functions, respectively. $P_{\pmb{\theta}}(Y|\pmb{X})$ then
 refers to the conditional density function of the linear regression
-model $Y=\alpha+\pmb{X}\pmb{\beta}+\epsilon$. Denote the validation
+model $Y=\alpha+\pmb{\beta}^{\text T}\mathbf{X}+\epsilon$. Denote the validation
 indicator variable by $V$, with $V=1$ indicating that a record was
 validated and $V=0$ otherwise. For records that do not undergo
 validation, their measurement errors $(W, \pmb{U})$ are missing.

@@ -64,7 +64,6 @@ editor:
   markdown: 
     wrap: 72
 execute: 
-  cache: true
   warning: false
 ---
 
@@ -131,13 +130,13 @@ implement, as they involve approximating nuisance conditional densities
 using B-splines [@schumaker1981] and then maximizing the semiparametric
 likelihood via a sophisticated EM algorithm [@tao2017efficient].
 
-In this paper, we introduce the sleev package, which computes SMLEs for
+In this paper, we introduce the `sleev` package, which computes SMLEs for
 linear and logistic regressions using partially-validated, error-prone
-data. The sleev package incorporates error-prone data on all records
+data. The `sleev` package incorporates error-prone data on all records
 plus validated data on a subset of records to obtain efficient and
 robust estimates of regression parameters in a user-friendly manner.
 This paper describes the SMLE method (Sections 2 and 3) and demonstrates
-the features of the sleev package and the application of functions in
+the features of the `sleev` package and the application of functions in
 the package with a detailed illustration using simulated HIV data
 (Section 4).
 
@@ -217,7 +216,7 @@ note that the $p_{kj}$'s need to satisfy the constraints
 $\sum_{k=1}^mp_{kj}=1$ and $p_{kj} \geq 0$ since they approximate
 conditional densities. The log-likelihood in expression (@eq-loglik) is
 now approximated by $$
-\sum^n_{i=1}V_i\{\log P_{\pmb{\theta}}(Y_i|\pmb{X}_i)+\sum_{k=1}^mI[(W_i=w_k, \pmb{U}_i=\pmb{u}_k)\sum_{j=1}^{s_n}B_j^q(\pmb{X}_i^{\pmb{*}})\log p_{kj}]\}$$
+\sum^n_{i=1}V_i\{\log P_{\pmb{\theta}}(Y_i|\pmb{X}_i)+\sum_{k=1}^mI(W_i=w_k, \pmb{U}_i=\pmb{u}_k)\sum_{j=1}^{s_n}B_j^q(\pmb{X}_i^{\pmb{*}})\log p_{kj}\}$$
 $$    +\sum^n_{i=1}(1-V_i)\log\left\{\sum_{k=1}^m P_{\pmb{\theta}}(Y^*_i-w_k|\pmb{X}_i^{\pmb{*}}-\pmb{u}_k)\sum_{j=1}^{s_n}B_j^q(\pmb{X}_i^{\pmb{*}})p_{kj}\right\}.  
 $$ {#eq-loglikApprox} The maximization of expression (@eq-loglikApprox)
 is carried out through an EM algorithm to find the SMLEs
@@ -275,9 +274,9 @@ properties, can be found in @lotspeich2022efficient.
 
 # 4. Case study with mock data
 
-## 4.1 Overview and installation of the sleev R package
+## 4.1 Overview and installation of the `sleev` R package
 
-The sleev package provides a user-friendly way to obtain the SMLEs and
+The `sleev` package provides a user-friendly way to obtain the SMLEs and
 their standard errors. The package can be installed through CRAN:
 
 ```         
@@ -289,7 +288,7 @@ library(sleev)
 library(sleev)
 ```
 
-The sleev package includes two main functions: `linear2ph()` and
+The `sleev` package includes two main functions: `linear2ph()` and
 `logistic2ph()`, to fit linear and logistic regressions, respectively,
 under two-phase sampling with an error-prone outcome and covariates. The
 input arguments are similar for the two functions and listed in
@@ -298,7 +297,7 @@ arguments for error-prone and error-free outcome and covariates, the
 user needs to specify the B-spline matrix $B_j^q(\pmb{X}_i^{\pmb{*}})$
 to be used in the estimation of the error densities.
 
-We now illustrate how to obtain SMLEs using the sleev package. First, we
+We now illustrate how to obtain SMLEs using the `sleev` package. First, we
 briefly describe the data that will be used, and then we show how to fit
 a linear regression model in the presence of errors in both the outcome
 and covariates using the `linear2ph()` function. We will explain how to
@@ -333,7 +332,7 @@ funtab2 <- data.frame(Argument=c("Y_unval","Y","X_unval","X","Z","Bspline","data
 
 ## 4.2 Overview of Data
 
-We illustrate the usage of the functions in the sleev package with a
+We illustrate the usage of the functions in the `sleev` package with a
 dataset constructed to mimic data from the Vanderbilt Comprehensive Care
 Clinic (VCCC) patient records from @Giganti2020accounting. The VCCC
 collects data for people living with HIV who were admitted to the clinic
@@ -380,13 +379,13 @@ kablevccc <- collapse_rows(kablevccc, columns = 4)
 kablevccc
 ```
 
-The dataset is included in the sleev package, and it can be loaded by
+The dataset is included in the `sleev` package, and it can be loaded by
 
 ```         
 data(mock.vccc)
 ```
 
-Table @tbl-vccchead displays the first six rows of the VCCC dataset:
+@tbl-vccchead displays the first six rows of the VCCC dataset:
 patients $1, 3,$ and $5$ have `NA` listed for the `VL_val`, `ADE_val`,
 and `CD4_val` variables, which means that these patients were not
 selected for data validation; in contrast, patients $2, 4,$ and $6$ had
@@ -400,7 +399,7 @@ cells/mm$^3$, not 36.
 #| label: tbl-vccchead
 #| tbl-cap: "First six patients in mock.vccc"
 tab <- knitr::kable(head(mock.vccc, 6), format = "latex", booktabs = T, linesep="")
-tab <- kable_styling(tab, latex_options = c("scale_down", "HOLD_position", "striped"))
+tab <- kable_styling(tab, latex_options = c("scale_down", "striped"))
 tab <- row_spec(tab, 0, monospace = TRUE)
 tab
 ```
@@ -793,7 +792,8 @@ perform PCA for the two continuous covariates. The two input variables
 are the error-prone unvalidated VL and error-free age:
 
 ```{r}
-VLAge_pca_all <- prcomp(x=mock.vccc[,c("VL_unval_l10", "Age")], center = TRUE,scale. = TRUE)
+VLAge_pca_all <- prcomp(x=mock.vccc[,c("VL_unval_l10", "Age")], 
+                        center = TRUE,scale. = TRUE)
 VLAge_pca <- VLAge_pca_all$x[,1]
 ```
 
@@ -918,7 +918,7 @@ initiation and whether the patient is ART naive at enrollment is not.
 
 # 5. Summary and discussion
 
-The sleev R package is a useful tool for analyzing two-phase validation
+The `sleev` R package is a useful tool for analyzing two-phase validation
 studies with error-prone outcome and covariates. It empowers users to
 perform linear regression for continuous outcomes and logistic
 regression for binary outcomes. It allows the errors among variables to
@@ -928,7 +928,7 @@ errors in the outcome or covariates only. The resulting SMLEs are
 statistically efficient and numerically stable while making minimal
 assumptions on the error distributions.
 
-In this paper, we demonstrate the usage of functions in the sleev
+In this paper, we demonstrate the usage of functions in the `sleev`
 package under different scenarios. We showcase the selection process of
 the size of a B-spline basis, which is not frequently seen in papers
 that involve the use of B-splines. We also show the impact of curse of
@@ -939,7 +939,7 @@ useful for their applications.
 
 In the future, we plan to extend the SMLE to address errors in outcomes
 and covariates for models with count and time-to-event outcomes.
-Additional functions will be added to the sleev package as methods are
+Additional functions will be added to the `sleev` package as methods are
 developed for these settings.
 
 # Acknowledgement

@@ -51,7 +51,7 @@ studies. The sieve maximum likelihood estimator (SMLE), which combines
 the error-prone data on all records with the validated data on a
 subsample, is a highly efficient and robust estimator to analyze such
 data. However, given their complexity, a computationally efficient and
-user-friendly tool is needed to obtain SMLEs. R package sleev fills this
+user-friendly tool is needed to obtain SMLEs. R package `sleev` fills this
 gap by making semiparametric likelihood-based inference using SMLEs for
 error-prone two-phase data in settings with binary and continuous
 outcomes. Functions from this package can be used to analyze data with
@@ -76,21 +76,20 @@ estimator to analyze such two-phase data [@tao2021efficient; @lotspeich2022effic
 practice these estimators can be difficult to implement, as they involve
 approximating nuisance conditional densities using B-splines [@schumaker2007spline]
 and then maximizing the semiparametric likelihood via a sophisticated EM
-algorithm [@tao2017efficient]. R package sleev makes this method readily
-applicable for practitioners in a user-friendly way. sleev integrates
+algorithm [@tao2017efficient]. R package `sleev` makes this method readily
+applicable for practitioners in a user-friendly way. `sleev` integrates
 and extends R packages logreg2ph and TwoPhaseReg, two primitive R
 packages developed with the original methods papers [@tao2021efficient; @lotspeich2022efficient]. These
 two packages lacked proper documentation, were computationally slow, and
 were difficult to use. To promote the use of SMLE in two-phase data,
-extensive work has been done to create sleev, a computationally
+extensive work has been done to create `sleev`, a computationally
 efficient and user-friendly R package to analyze two-phase, error-prone
-data. Specifically, in sleev we rewrote the core algorithms in C++ to
+data. Specifically, in `sleev` we rewrote the core algorithms in C++ to
 speed up the computation, and we unified the syntax across functions.
 
 # SMLE for linear regression
 
-In this section, we briefly introduce the SMLEs for linear regression.
-The SMLEs for logistic regression are similar to linear regression and
+In this section, we briefly introduce the SMLEs for linear regression. The SMLEs for logistic regression are similar to linear regression and
 described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).Suppose that we want to fit
 a standard linear regression model for a continuous outcome $Y$ and
 covariates $\mathbf{X}$:
@@ -118,7 +117,7 @@ where $P( \cdot )$ and $P\left( \cdot | \cdot \right)$ denote density
 and conditional density functions, respectively.
 $P_{\mathbf{\theta}}\left( Y|\mathbf{X} \right)$ then refers to the
 conditional density function of
-$Y = \alpha +  \boldsymbol{\beta}^{T}\mathbf{X} + \epsilon$. Denote the validation
+$Y = \alpha + \boldsymbol{\beta}^{T}\mathbf{X} + \epsilon$. Denote the validation
 indicator variable by $V$, with $V = 1$ indicating that a record was
 validated and $V = 0$ otherwise. For records with $V = 0$, their
 measurement errors $\left( W,\mathbf{U} \right)$ are missing, and
@@ -171,8 +170,8 @@ found in [@lotspeich2022efficient].
 
 # Functionalities of the `sleev` R package
 
-The sleev package provides a user-friendly way to obtain the SMLEs and
-their standard errors. The package can be installed and loaded from the R CRAN library or [Github](https://github.com/dragontaoran/sleev). The sleev package includes two main functions:
+The `sleev` package provides a user-friendly way to obtain the SMLEs and
+their standard errors. The package can be installed and loaded from the R CRAN library or [Github](https://github.com/dragontaoran/sleev). The `sleev` package includes two main functions:
 linear2ph() and logistic2ph(), to fit linear and logistic regressions,
 respectively, under two-phase sampling with an error-prone outcome and
 covariates. The input arguments are similar for the two functions and
@@ -189,7 +188,7 @@ analyses.
 
 # Example: Case study with mock data
 
-We now illustrate how to obtain SMLEs using the sleev package with
+We now illustrate how to obtain SMLEs using the `sleev` package with
 dataset `mock.vccc`. Specifically, we show how to fit a linear regression
 model in the presence of errors in both the outcome and covariates using
 the linear2ph() function. Situations with more covariates and examples
@@ -266,7 +265,8 @@ res_linear <- linear2ph(Y_unval="CD4_unval_sq10", Y="CD4_val_sq10",
                         Bspline=colnames(Bspline), data=data,
                         hn_scale = 1, noSE = FALSE, TOL = 1e-04, 
                         MAX_ITER = 1000, verbose = FALSE)
-paste0("Run time: ", round(Sys.time()-start.time, 3), " min")
+paste0("Run time: ", round(difftime(Sys.time(), start.time, 
+                                    units = "mins"), 3), " min")
 
 [1] "Run time: 2.822 min"
 ```

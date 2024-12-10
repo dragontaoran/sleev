@@ -266,9 +266,9 @@ res_linear <- linear2ph(Y_unval="CD4_unval_sq10", Y="CD4_val_sq10",
                         hn_scale = 1, noSE = FALSE, TOL = 1e-04, 
                         MAX_ITER = 1000, verbose = FALSE)
 paste0("Run time: ", round(difftime(Sys.time(), start.time, 
-                                    units = "mins"), 3), " min")
+                                    units = "secs"), 3), " sec")
 
-[1] "Run time: 0.049 min"
+[1] "Run time: 2.78 sec"
 ```
 
 Check convergence:

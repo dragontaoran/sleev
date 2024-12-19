@@ -70,9 +70,7 @@ error-prone pre-validation data for all records (phase one data) and error-free 
 Analyses aims to combine the two types of data to obtain estimates that
 have low bias and are as efficient as possible.
 
-SMLE, which combines the error-prone data on all records with the
-validated data on a subsample, is a highly efficient and robust
-estimator to analyze such two-phase data [@tao2021efficient; @lotspeich2022efficient]. Still, in
+SMLE is an estimator that analyzes two-phase data that combines the error-prone data on all records with the validated data on a subsample. SMLE is highly efficient and robust because it utilizes all available data from both phases while not making any parametric assumption on the error model [@tao2021efficient; @lotspeich2022efficient]. Still, in
 practice these estimators can be difficult to implement, as they involve
 approximating nuisance conditional densities using B-splines [@schumaker2007spline]
 and then maximizing the semiparametric likelihood via a sophisticated EM

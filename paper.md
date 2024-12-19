@@ -90,7 +90,7 @@ speed up the computation, and we unified the syntax across functions.
 # SMLE for linear regression
 
 In this section, we briefly introduce the SMLEs for linear regression. The SMLEs for logistic regression are similar to linear regression and
-described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).Suppose that we want to fit
+described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf). Suppose that we want to fit
 a standard linear regression model for a continuous outcome $Y$ and
 covariates $\mathbf{X}$:
 $Y = \alpha + \boldsymbol{\beta}^{T}\mathbf{X} + \epsilon$, where
@@ -132,7 +132,7 @@ takes the form
 
 $$\sum_{i = 1}^{n}{V_{i}\{\log P_{\mathbf{\theta}}\left( Y_{i} \middle| \mathbf{X}_{i} \right) + \log{P(W_{i},\mathbf{U}_{i}|\mathbf{X}_{i}^{*})\}}}$$
 
-$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\mathbf{\theta}}\left( Y_{i}^{*} - w|\mathbf{X}_{i}^{*} - \mathbf{u} \right)P\left( w,\mathbf{u} \middle| \mathbf{X}_{i}^{\mathbf{*}} \right)dwd\mathbf{u} \right\}}.\ \ \ \ \ \ \ \ (1)$$
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\mathbf{\theta}}\left( Y_{i}^{*} - w|\mathbf{X}_{i}^{*} - \mathbf{u} \right)P\left( w,\mathbf{u} \middle| \mathbf{X}_{i}^{\mathbf{*}} \right)dwd\mathbf{u} \right\}}\ \ \ \ \ \ \ \ (1)$$
 
 where $P(\pmb{X^*})$ is left out, because the
 error-prone covariates are fully observed and thus $P(\pmb{X^*})$ can
@@ -156,7 +156,7 @@ $B_{j}^{q}\left( \mathbf{X}_{i}^{\mathbf{*}} \right)$ and
 $\left( w_{k},\mathbf{u}_{k} \right)$. The log-likelihood in expression
 (1) is now approximated by
 
-$$\sum_{i = 1}^{n}V_{i}\left\{\log P_{\mathbf{\theta}}\left(Y_{i} \middle| \mathbf{X}_{i} \right) +\sum_{k = 1}^{m}\big\{{I(W_{i}=w_{i},\mathbf{U}_{i}= \mathbf{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}}\log{p_{kj}}\big\}\right\}$$
+$$\sum_{i = 1}^{n}V_{i}\left\{\log P_{\mathbf{\theta}}\left(Y_{i} \middle| \mathbf{X}_{i} \right) +\sum_{k = 1}^{m}\big\{{I(W_{i}=w_{k},\mathbf{U}_{i}= \mathbf{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}}\log{p_{kj}}\big\}\right\}$$
 
 $$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \sum_{k = 1}^{m}{P_{\mathbf{\theta}}\left( Y_{i}^{*} - w|\mathbf{X}_{i}^{*} - \mathbf{u} \right)}\sum_{j = 1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}\log{p_{kj}\}} \right\}}.\ \ \ \ \ \ \ (2)$$
 

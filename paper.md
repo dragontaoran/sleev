@@ -156,7 +156,7 @@ $\left( w_{k},\mathbf{u}_{k} \right)$. The log-likelihood in expression
 
 $$\sum_{i = 1}^{n}V_{i}\left\{\log P_{\mathbf{\theta}}\left(Y_{i} \middle| \mathbf{X}_{i} \right) +\sum_{k = 1}^{m}\big\{{I(W_{i}=w_{k},\mathbf{U}_{i}= \mathbf{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}}\log{p_{kj}}\big\}\right\}$$
 
-$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \sum_{k = 1}^{m}{P_{\mathbf{\theta}}\left( Y_{i}^{*} - w|\mathbf{X}_{i}^{*} - \mathbf{u} \right)}\sum_{j = 1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}\log{p_{kj}\}} \right\}}.\ \ \ \ \ \ \ (2)$$
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \sum_{k = 1}^{m}{P_{\mathbf{\theta}}\left( Y_{i}^{*} - w_{k}|\mathbf{X}_{i}^{*} - \mathbf{u}_{k} \right)}\sum_{j = 1}^{s_{n}}{B_{j}^{q}(\mathbf{X}_{i}^{*})}\log{p_{kj}\}} \right\}}.\ \ \ \ \ \ \ (2)$$
 
 The maximization of expression (2) is carried out through an EM
 algorithm to find the SMLEs $\widehat{\mathbf{\theta}}$ and

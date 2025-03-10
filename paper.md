@@ -70,14 +70,14 @@ error-prone pre-validation data for all records (phase one data) and error-free 
 Analyses aims to combine the two types of data to obtain estimates that
 have low bias and are as efficient as possible.
 
-There are some R packages that are effective for data with measurement errors. The R package `decon` performs nonparametric regression for measurement error models [@wang2011deconvolution]. The R package `simex` and `mecor` approximates the error distribution with different parametric approaches[@lederer2006short; @nab2021mecor]. All of them deals with errors in either outcome or the covariates but not both, and there are no ways to combine the two phases of data with these packages.
+There are some R packages that are effective for data with measurement errors. The R package `decon` performs nonparametric regression for measurement error models [@wang2011deconvolution]. The R package `simex` and `mecor` approximates the error distribution with different parametric approaches [@lederer2006short; @nab2021mecor]. All of them deals with errors in either outcome or the covariates but not both, and there are no ways to combine the two phases of data with these packages.
 
 SMLE is an estimator that analyzes two-phase data that combines the error-prone data on all records with the validated data on a subsample. SMLE is highly efficient because it utilizes all available data from both phases. [@tao2021efficient; @lotspeich2022efficient]. SMLE is also robust, since it is not making any parametric assumption on the error model. One of the proofs for the SMLE's robustness is a simulation analysis in @tao2021efficient, where SMLE is far less biased with error model misspecification when compared with a moment-based estimator. Moreover, SMLE allows model with error-prone outcome and error-prone covariates. Still, in
 practice these estimators can be difficult to implement, as they involve
 approximating nuisance conditional densities using B-splines [@schumaker2007spline]
 and then maximizing the semiparametric likelihood via a sophisticated EM
 algorithm [@tao2017efficient]. Here we present [R](https://www.r-project.org/) package `sleev` who makes this method readily
-applicable for practitioners in a user-friendly way[@Rlanguage]. `sleev` integrates
+applicable for practitioners in a user-friendly way [@Rlanguage]. `sleev` integrates
 and extends R packages `logreg2ph` and `TwoPhaseReg`, two primitive R
 packages developed with the original methods papers [@tao2021efficient; @lotspeich2022efficient]. These
 two packages lacked proper documentation and were difficult to use. `logreg2ph` was computationally slow. To promote the use of SMLE in two-phase data,
@@ -219,7 +219,8 @@ heterogeneous between males and females. The described B-spline basis is constru
 
 ```
 sn=20
-data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn, degree = 3,  group = "Sex")
+data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn,
+                        degree = 3,  group = "Sex")
 ```
 Alternatively, if the
 investigator has prior knowledge that the errors in `VL_unval_l10` are

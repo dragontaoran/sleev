@@ -220,7 +220,7 @@ heterogeneous between males and females. The described B-spline basis is constru
 ```
 sn=20
 data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn,
-                        degree = 3,  group = "Sex")
+                         degree = 3,  group = "Sex")
 ```
 Alternatively, if the
 investigator has prior knowledge that the errors in `VL_unval_l10` are

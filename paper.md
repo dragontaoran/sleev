@@ -223,7 +223,7 @@ estimation of the error densities.
 Table 1: Main arguments for `linear2ph()` and `logistic2ph()`
 
 | Argument | Description                                                                                                                           |
-|:------------------------|:----------------------------------------------|
+|:---------|:-------------------------------------------------------------|
 | y_unval  | Column name of unvalidated outcome in the input dataset.                                                                              |
 | y        | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
 | x_unval  | Column names of unvalidated covariates in the input dataset.                                                                          |
@@ -244,7 +244,7 @@ the Vanderbilt Comprehensive Care Clinic (VCCC) patient records from
 Table 2: Data dictionary for `mock.vccc`
 
 | Name      | Status      | Type       | Description                                                                          |
-|:-----------------|:-----------------|:-----------------|:------------------|
+|:----------|:------------|:-----------|:-------------------------------------|
 | ID        | error-free  |            | Patient ID                                                                           |
 | VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART) initiation                           |
 | VL_val    | validated   |            |                                                                                      |
@@ -255,14 +255,6 @@ Table 2: Data dictionary for `mock.vccc`
 | prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no                                   |
 | Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female                                        |
 | Age       | error-free  | continuous | Age of patient                                                                       |
-
-+----------+----------+----------+
-| Column 1 | Column 2 | Column 3 |
-+==========+==========+==========+
-| Merged   | B        | C        |
-+          +----------+----------+
-|          | E        | F        |
-+----------+----------+----------+
 
 # Example: Case study with mock data
 

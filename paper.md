@@ -93,7 +93,7 @@ SMLE is highly efficient because it uses all available data from both
 phases [@tao2021efficient; @lotspeich2022efficient]. SMLE is also
 robust, since it does not make any parametric assumptions on the error
 model. For example, @tao2021efficient performed a set of simulations
-highlighting the SMLE\'s robustness to different error mechanisms
+highlighting the SMLE's robustness to different error mechanisms
 including settings where the errors had non-zero mean and were
 multiplicative. Moreover, SMLE allows error-prone outcome and
 error-prone covariates in the same model. Still, in practice these
@@ -106,12 +106,20 @@ user-friendly way. `sleev` integrates and extends R packages `logreg2ph`
 and `TwoPhaseReg`, two primitive R packages developed with the original
 methods papers [@tao2021efficient; @lotspeich2022efficient]. These two
 packages lacked proper documentation and were difficult to use.
-`logreg2ph` was computationally slow. To promote the use of SMLE in
-two-phase data, extensive work has been done to create `sleev`, a
-computationally efficient and user-friendly R package to analyze
-two-phase, error-prone data. Specifically, in `sleev` we rewrote the
-core algorithms of `logreg2ph` in C++ to speed up the computation (Table
-1), and we unified the syntax across functions.
+`logreg2ph` was computationally slow.
+
+To promote the use of SMLE in two-phase data, extensive work has been
+done to create `sleev`, a computationally efficient and user-friendly R
+package to analyze two-phase, error-prone data. Specifically, in `sleev`
+we rewrote the core algorithms of `logreg2ph` in C++ to speed up the
+computation, and we unified the syntax across functions. To compare the
+computational times, we set up simulations with the same code in the
+vignette. The simulations included phase-1 and phase-2 sampe sizes of
+2087 and 835, respectively, and we performed on a *ACCRE information
+that I will include once the code finishes running*. Across 100
+simulations, the previous `logreg2ph` took on averaage xx seconds with a
+standard deviation of yy seconds, while the current `logisitc2ph` in
+`sleev` took xx seconds with a standard deviation of yy seconds.
 
 # SMLE for linear regression
 
@@ -206,15 +214,47 @@ their standard errors. The package can be installed from
 includes two main functions: linear2ph() and logistic2ph(), to fit
 linear and logistic regressions, respectively, under two-phase sampling
 with an error-prone outcome and covariates. The input arguments are
-similar for the two functions and listed in Table 2. From Table 2, we
+similar for the two functions and listed in Table 1. From Table 1, we
 see that in addition to the arguments for error-prone and error-free
 outcome and covariates, the user needs to specify the B-spline matrix
 $B_{j}^{q}\left( \mathbf{X}_{i}^{*} \right)$ to be used in the
 estimation of the error densities.
 
-The `sleev` package included a dataset constructed to mimic data from
+Table 1: Main arguments for `linear2ph()` and `logistic2ph()`
+
+| Argument | Description                                                                                                                           |
+|:----------------------|:-----------------------------------------------|
+| y_unval  | Column name of unvalidated outcome in the input dataset.                                                                              |
+| y        | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
+| x_unval  | Column names of unvalidated covariates in the input dataset.                                                                          |
+| x        | Column names of validated covariates in the input dataset. NAs in the input will be counted as individuals not selected in phase two. |
+| z        | Column names of error-free covariates in the input dataset.                                                                           |
+| b_spline | Column names of the B-spline basis in the input dataset.                                                                              |
+| data     | Dataset                                                                                                                               |
+| hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is 1.                 |
+| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is TRUE.                                  |
+| tol      | Convergence criterion. The default is 0.0001.                                                                                         |
+| max_iter | Maximum number of iterations in the EM algorithm. The default is 1000.                                                                |
+| verbose  | Print analysis details when set to TRUE. The default is FALSE.                                                                        |
+
+The `sleev` package includes a dataset constructed to mimic data from
 the Vanderbilt Comprehensive Care Clinic (VCCC) patient records from
-[@giganti2020accounting]. Table 3 lists the variables in this dataset.
+[@giganti2020accounting]. Table 2 lists the variables in this dataset.
+
+Table 2: Data dictionary for `mock.vccc`
+
+| Name      | Status      | Type       | Description                                                                          |
+|:----------------|:----------------|:----------------|:-------------------|
+| ID        | error-free  |            | Patient ID                                                                           |
+| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART) initiation                           |
+| VL_val    | validated   |            |                                                                                      |
+| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within one year of ART initiation: 1 - yes, 0 -- no |
+| ADE_val   | validated   |            |                                                                                      |
+| CD4_unval | error-prone | continuous | CD4 count at ART initiation                                                          |
+| CD4_val   | validated   |            |                                                                                      |
+| prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no                                   |
+| Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female                                        |
+| Age       | error-free  | continuous | Age of patient                                                                       |
 
 # Example: Case study with mock data
 
@@ -250,17 +290,19 @@ phase one). The `spline2ph()` function in `sleev` packages can set up
 the B-spline basis, and combine it with the data input for the final
 analysis. Here, we use a cubic B-spline basis with the `degree=3`
 argument. The size of the basis $s_{n}$ is set to be 20, specified
-through the `size = 20` argument. The B-spline basis is set up
-separately for the two `Sex` groups, and the size of the B-spline basis
-is assigned in proportion to the relative size of the two `Sex` groups.
-This is specified by argument `group`. This allows the errors in
-`VL_unval_l10` to be heterogeneous between males and females. The
-described B-spline basis is constructed as follows.
+through the `size = 20` argument. More details regarding order and size
+selection of B-spline basis are discussed in vignette. The B-spline
+basis is set up separately for the two `Sex` groups, and the size of the
+B-spline basis is assigned in proportion to the relative size of the two
+`Sex` groups. This is specified by argument `group`. This allows the
+errors in `VL_unval_l10` to be heterogeneous between males and females.
+The described B-spline basis is constructed as follows.
 
 ```         
-sn=20
+sn <- 20
+b_spline_names <- paste0("bs", 1:sn)
 data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn,
-                         degree = 3,  group = "Sex")
+                         degree = 3,  bs_names = b_spline_names, group = "Sex")
 ```
 
 Alternatively, if the investigator has prior knowledge that the errors
@@ -268,7 +310,8 @@ in `VL_unval_l10` are likely to be homogeneous, one may fit a simpler
 model by not stratifying the B-spline basis by `Sex`.
 
 The SMLEs can be obtained by running function `linear2ph()`, as shown in
-the code below. The fitted SMLEs are stored in a list object of class
+the code below. Again, a list explaining the inputs are shown in
+Table 1. The fitted SMLEs are stored in a list object of class
 `linear2ph`. Here, we assign the fitted SMLEs to the variable name
 `res_linear`. The list of class `linear2ph` contains five components:
 `coefficient`, `covariance`, `sigma`, `converge`, and `converge_cov`.
@@ -277,7 +320,7 @@ the code below. The fitted SMLEs are stored in a list object of class
 start.time <- Sys.time()
 res_linear <- linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
                         x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex",
-                        b_spline = colnames(Bspline), data = data.linear,
+                        b_spline = b_spline_names, data = data.linear,
                         hn_scale = 1, se = TRUE, tol = 1e-04, 
                         max_iter = 1000, verbose = FALSE)
 paste0("Run time: ", round(difftime(Sys.time(), start.time, 
@@ -299,7 +342,8 @@ Coefficients:
 ```
 
 The `summary()` function for list of class `linear2ph()` returns the
-estimated coefficients, their standard errors, test statistics, and p-values as well as their covariance as follows:
+estimated coefficients, their standard errors, test statistics, and
+p-values as well as their covariance as follows:
 
 ```         
 > summary(res_linear)
@@ -309,12 +353,6 @@ Coefficients:
 Intercept     4.821 0.1587     30.39 0.000000
 VL_val_l10   -0.141 0.0398     -3.55 0.000389
 Sex           0.273 0.1089      2.51 0.012229
-
-Covariance Matrix:
-         [,1]      [,2]      [,3]
-[1,]  0.02517 -5.06e-03 -8.87e-03
-[2,] -0.00506  1.59e-03 -5.84e-05
-[3,] -0.00887 -5.84e-05  1.19e-02
 ```
 
 # Acknowledgement
@@ -323,44 +361,3 @@ This research was supported by the National Institute of Health grants
 R01AI131771, R01HL094786, and P30AI110527 and the 2022 Biostatistics
 Faculty Development Award from the Department of Biostatistics at
 Vanderbilt University Medical Center.
-
-# Reference
-
-Table 1: Logistic regression function computational time (s) comparison,
-across 100 simualations.
-
-|         Functions         |         Mean         |           SD           |
-|:-------------------------:|:--------------------:|:----------------------:|
-| `logreg2ph` `logistic2ph` | 155.814571 70.569576 | 72.41892927 8.38126354 |
-
-Table 2: Main arguments for linear2ph() and logistic2ph()
-
-| Argument                   | Description                                                                                                                           |
-|:---------------------|:-------------------------------------------------|
-| Y_unval                    | Column name of unvalidated outcome in the input dataset.                                                                              |
-| Y                          | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
-| X_unval                    | Column names of unvalidated covariates in the input dataset.                                                                          |
-| X                          | Column names of validated covariates in the input dataset. NAs in the input will be counted as individuals not selected in phase two. |
-| Z                          | Column names of error-free covariates in the input dataset.                                                                           |
-| Bspline                    | Column names of the B-spline basis in the input dataset.                                                                              |
-| data                       | Dataset                                                                                                                               |
-| hn_scale                   | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is 1.                 |
-| noSE                       | Standard errors of the parameter estimators will not be estimated when set to TRUE. The default is FALSE.                             |
-| TOL Convergence criterion. | The default is 0.0001.                                                                                                                |
-| MAX_ITER                   | Maximum number of iterations in the EM algorithm. The default is 1000.                                                                |
-| verbose                    | Print analysis details when set to TRUE. The default is FALSE.                                                                        |
-
-Table 3: Data dictionary for mock.vccc
-
-| Name      | Status      | Type       | Description                                                                          |
-|:---------------|:---------------|:---------------|:-----------------------|
-| ID        | error-free  |            | Patient ID                                                                           |
-| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART) initiation                           |
-| VL_val    | validated   |            |                                                                                      |
-| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within one year of ART initiation: 1 - yes, 0 -- no |
-| ADE_val   | validated   |            |                                                                                      |
-| CD4_unval | error-prone | continuous | CD4 count at ART initiation                                                          |
-| CD4_val   | validated   |            |                                                                                      |
-| prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no                                   |
-| Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female                                        |
-| Age       | error-free  | continuous | Age of patient                                                                       |

@@ -6,6 +6,7 @@
 #' @param data Specifies the name of the dataset. This argument is required.
 #' @param size Pass on to the \code{df} argument in \code{splines::bs()}. Degrees of freedom for EACH variable.
 #' @param degree Pass on to the \code{degree} argument in \code{splines::bs()}. Degree of the piecewise polynomial. Default is 3 for cubic splines.
+#' @param bs_names Column names of the output B-spline basis matrix.
 #' @param group Optional. Column name of the categorical variable of which might have heterogeneous errors among different groups.
 #' @param split_group Optional. Whether to split by group proportion for the group with B-spline size if the \code{group} argument is provided. If `FALSE`, then the split will be averaged across all groups. Default is `TRUE`.
 #'
@@ -21,7 +22,7 @@
 #' spline2ph(size = 20, degree = 3, data = mock.vccc, x = "VL_unval", group = "Sex")
 #'
 #' @export
-spline2ph <- function(x, data, size = 20, degree = 3, group = NULL, split_group = TRUE, bs_names = NULL){
+spline2ph <- function(x, data, size = 20, degree = 3, bs_names, group = NULL, split_group = TRUE){
   n <- nrow(data) # get the number of rows of the dataset
   # portion the size of the B-spline basis according to the size of two sex groups
   if(is.null(group)){
@@ -74,7 +75,7 @@ spline2ph <- function(x, data, size = 20, degree = 3, group = NULL, split_group 
 
   # create B-spline basis for this analysis by combining the bases created
   Bspline.df <- data.frame(Bspline.df)
-  colnames(Bspline.df) <- paste0("bs", 1:ncol(Bspline.df))
+  colnames(Bspline.df) <- bs_names
   Bspline.df <- cbind(data, Bspline.df)
 
   return(Bspline.df)

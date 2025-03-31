@@ -246,10 +246,10 @@ Table 2: Data dictionary for `mock.vccc`
 | Name      | Status      | Type       | Description                                                                          |
 |:----------|:------------|:-----------|:-------------------------------------|
 | ID        | error-free  |            | Patient ID                                                                           |
-| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART) initiation                           |
-| VL_val    | validated   |            |                                                                                      |
-| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within one year of ART initiation: 1 - yes, 0 -- no |
-| ADE_val   | validated   |            |                                                                                      |
+| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy                                            |
+| VL_val    | validated   |            | (ART) initiation                                                                     |
+| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within                                              |
+| ADE_val   | validated   |            | one year of ART initiation: 1 - yes, 0 -- no                                         |
 | CD4_unval | error-prone | continuous | CD4 count at ART initiation                                                          |
 | CD4_val   | validated   |            |                                                                                      |
 | prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no                                   |

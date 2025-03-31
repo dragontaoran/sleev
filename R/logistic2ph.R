@@ -24,6 +24,7 @@
 #' `logistic2ph()` returns an object of class `"logistic2ph"`. The function `coef()` is used to obtain the coefficients of the fitted model. The function `summary()` is used to obtain and print a summary of results.
 #'
 #' An object of class `"logistic2ph"` is a list containing at least the following components:
+#' \item{call}{the matched call.}
 #' \item{coefficients}{A named vector of the logistic regression coefficient estimates.}
 #' \item{covariance}{The covariance matrix of the logistic regression coefficient estimates.}
 #' \item{converge}{In parameter estimation, if the EM algorithm converges, then \code{converge = TRUE}. Otherwise, \code{converge = FALSE}.}
@@ -38,6 +39,9 @@
 #' @export
 
 logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = NULL, b_spline = NULL, data = NULL, hn_scale = 1, se = TRUE, tol = 1E-4, max_iter = 1000, verbose = FALSE) {
+  # Store the function call
+  model_call <- match.call()
+
   # variable name change
   Y_unval = y_unval; Y = y ; X_unval = x_unval; X = x; Z = z
   Bspline = b_spline; noSE = !se; TOL = tol; MAX_ITER = max_iter
@@ -249,9 +253,9 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
     gradient_theta <- .calculateGradient(w_t, n, theta_design_mat, comp_dat_all[, Y], muVector)
     hessian_theta <- .calculateHessian(theta_design_mat, w_t, muVector, n, mus_theta);
     new_theta <- tryCatch(expr = prev_theta - (solve(hessian_theta) %*% gradient_theta),
-      error = function(err) {
-        matrix(NA, nrow = nrow(prev_theta))
-        })
+                          error = function(err) {
+                            matrix(NA, nrow = nrow(prev_theta))
+                          })
     if (any(is.na(new_theta))) {
       suppressWarnings(new_theta <- matrix(glm(formula = theta_formula, family = "binomial", data = data.frame(comp_dat_all), weights = w_t)$coefficients, ncol = 1))
       # browser()
@@ -368,44 +372,44 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
 
     ## Calculate pl(theta) -------------------------------------------------
     od_loglik_theta <- observed_data_loglik(N = N,
-      n = n,
-      Y_unval = Y_unval,
-      Y = Y,
-      X_unval = X_unval,
-      X = X,
-      Z = Z,
-      Bspline = Bspline,
-      comp_dat_all = comp_dat_all,
-      theta_pred = theta_pred,
-      gamma_pred = gamma_pred,
-      theta = new_theta,
-      gamma = new_gamma,
-      p = new_p)
+                                            n = n,
+                                            Y_unval = Y_unval,
+                                            Y = Y,
+                                            X_unval = X_unval,
+                                            X = X,
+                                            Z = Z,
+                                            Bspline = Bspline,
+                                            comp_dat_all = comp_dat_all,
+                                            theta_pred = theta_pred,
+                                            gamma_pred = gamma_pred,
+                                            theta = new_theta,
+                                            gamma = new_gamma,
+                                            p = new_p)
 
     I_theta <- matrix(data = od_loglik_theta,
                       nrow = nrow(new_theta),
                       ncol = nrow(new_theta))
 
     single_pert_theta <- sapply(X = seq(1, ncol(I_theta)),
-      FUN = pl_theta,
-      theta = new_theta,
-      h_N = h_N,
-      n = n,
-      N = N,
-      Y_unval = Y_unval,
-      Y = Y,
-      X_unval = X_unval,
-      X,
-      Z = Z,
-      Bspline = Bspline,
-      comp_dat_all = comp_dat_all,
-      theta_pred = theta_pred,
-      gamma_pred = gamma_pred,
-      gamma0 = new_gamma,
-      p0 = new_p,
-      p_val_num = p_val_num,
-      TOL = TOL,
-      MAX_ITER = MAX_ITER)
+                                FUN = pl_theta,
+                                theta = new_theta,
+                                h_N = h_N,
+                                n = n,
+                                N = N,
+                                Y_unval = Y_unval,
+                                Y = Y,
+                                X_unval = X_unval,
+                                X,
+                                Z = Z,
+                                Bspline = Bspline,
+                                comp_dat_all = comp_dat_all,
+                                theta_pred = theta_pred,
+                                gamma_pred = gamma_pred,
+                                gamma0 = new_gamma,
+                                p0 = new_p,
+                                p_val_num = p_val_num,
+                                TOL = TOL,
+                                MAX_ITER = MAX_ITER)
 
     if (any(is.na(single_pert_theta))) {
       I_theta <- matrix(data = NA,
@@ -414,7 +418,7 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
       SE_CONVERGED <- FALSE
     } else {
       spt_wide <- matrix(data = rep(c(single_pert_theta),
-                             times = ncol(I_theta)),
+                                    times = ncol(I_theta)),
                          ncol = ncol(I_theta),
                          byrow = FALSE)
       #for the each kth row of single_pert_theta add to the kth row / kth column of I_theta
@@ -426,25 +430,25 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
       pert_theta <- new_theta
       pert_theta[c] <- pert_theta[c] + h_N
       double_pert_theta <- sapply(X = seq(c, ncol(I_theta)),
-        FUN = pl_theta,
-        theta = pert_theta,
-        h_N = h_N,
-        n = n,
-        N = N,
-        Y_unval = Y_unval,
-        Y = Y,
-        X_unval = X_unval,
-        X,
-        Z = Z,
-        Bspline = Bspline,
-        comp_dat_all = comp_dat_all,
-        theta_pred = theta_pred,
-        gamma_pred = gamma_pred,
-        gamma0 = new_gamma,
-        p0 = new_p,
-        p_val_num = p_val_num,
-        MAX_ITER = MAX_ITER,
-        TOL = TOL)
+                                  FUN = pl_theta,
+                                  theta = pert_theta,
+                                  h_N = h_N,
+                                  n = n,
+                                  N = N,
+                                  Y_unval = Y_unval,
+                                  Y = Y,
+                                  X_unval = X_unval,
+                                  X,
+                                  Z = Z,
+                                  Bspline = Bspline,
+                                  comp_dat_all = comp_dat_all,
+                                  theta_pred = theta_pred,
+                                  gamma_pred = gamma_pred,
+                                  gamma0 = new_gamma,
+                                  p0 = new_p,
+                                  p_val_num = p_val_num,
+                                  MAX_ITER = MAX_ITER,
+                                  TOL = TOL)
       dpt <- matrix(data = 0,
                     nrow = nrow(I_theta),
                     ncol = ncol(I_theta))
@@ -458,12 +462,12 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
     }
     I_theta <- h_N ^ (- 2) * I_theta
     cov_theta <- tryCatch(expr = - solve(I_theta),
-      error = function(err) { matrix(NA, nrow = nrow(I_theta), ncol = ncol(I_theta)) }
-      )
+                          error = function(err) { matrix(NA, nrow = nrow(I_theta), ncol = ncol(I_theta)) }
+    )
     # ------------------------- Estimate Cov(theta) using profile likelihood
 
     se_theta <- tryCatch(expr = sqrt(diag(cov_theta)),
-      warning = function(w) { matrix(NA, nrow = nrow(prev_theta)) })
+                         warning = function(w) { matrix(NA, nrow = nrow(prev_theta)) })
     if (any(is.na(se_theta))) {
       SE_CONVERGED <- FALSE
     } else {
@@ -479,10 +483,12 @@ logistic2ph <- function(y_unval = NULL, y = NULL, x_unval = NULL, x = NULL, z = 
     res_coefficients$pvalue <- 1 - pchisq(res_coefficients$Statistic ^ 2, df = 1)
     colnames(res_coefficients) <- c("Estimate", "SE", "Statistic", "p-value")
 
-    res_final = list(coefficients = res_coefficients,
-                     covariance = cov_theta,
-                     converge = CONVERGED,
-                     converge_cov = SE_CONVERGED)
+    res_final = list(
+      call = model_call,  # Store the call in the object
+      coefficients = res_coefficients,
+      covariance = cov_theta,
+      converge = CONVERGED,
+      converge_cov = SE_CONVERGED)
 
     res_final <- logistic2ph_class(res_final)
 

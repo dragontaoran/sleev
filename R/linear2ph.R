@@ -24,7 +24,7 @@
 #' `linear2ph()` returns an object of class `"linear2ph"`. The function `coef()` is used to obtain the coefficients of the fitted model. The function `summary()` is used to obtain and print a summary of results.
 #'
 #' An object of class `"linear2ph"` is a list containing at least the following components:
-
+#' \item{call}{the matched call.}
 #' \item{coefficients}{A named vector of the linear regression coefficient estimates.}
 #' \item{sigma}{The residual standard error.}
 #' \item{covariance}{The covariance matrix of the linear regression coefficient estimates.}
@@ -103,207 +103,213 @@
 #' @export
 linear2ph <- function (y_unval=NULL, y=NULL, x_unval=NULL, x=NULL, z=NULL, b_spline=NULL, data=NULL, hn_scale=1, se=TRUE, tol=1E-4, max_iter=1000, verbose=FALSE)
 {
+  # Store the function call
+  model_call <- match.call()
+
   # variable name change
   Y_unval = y_unval; Y = y ; X_unval = x_unval; X = x; Z = z
   Bspline = b_spline; noSE = !se; TOL = tol; MAX_ITER = max_iter
-### linear2ph
-    ###############################################################################################################
-    #### check data ###############################################################################################
-    storage.mode(MAX_ITER) = "integer"
-	storage.mode(TOL) = "double"
-	storage.mode(noSE) = "integer"
+  ### linear2ph
+  ###############################################################################################################
+  #### check data ###############################################################################################
+  storage.mode(MAX_ITER) = "integer"
+  storage.mode(TOL) = "double"
+  storage.mode(noSE) = "integer"
 
-	if (missing(data)) {
-	    stop("No dataset is provided!")
-	}
+  if (missing(data)) {
+    stop("No dataset is provided!")
+  }
 
-	if (missing(Y_unval)) {
-		stop("The error-prone response Y_unval is not specified!")
-	} else {
-		vars_ph1 = Y_unval
-	}
+  if (missing(Y_unval)) {
+    stop("The error-prone response Y_unval is not specified!")
+  } else {
+    vars_ph1 = Y_unval
+  }
 
-	if (missing(X_unval)) {
-		stop("The error-prone covariates X_unval is not specified!")
-	} else {
-		vars_ph1 = c(vars_ph1, X_unval)
-	}
+  if (missing(X_unval)) {
+    stop("The error-prone covariates X_unval is not specified!")
+  } else {
+    vars_ph1 = c(vars_ph1, X_unval)
+  }
 
-	if (missing(Bspline)) {
-	    stop("The B-spline basis is not specified!")
-	} else {
-	    vars_ph1 = c(vars_ph1, Bspline)
-	}
+  if (missing(Bspline)) {
+    stop("The B-spline basis is not specified!")
+  } else {
+    vars_ph1 = c(vars_ph1, Bspline)
+  }
 
-	if (missing(Y)) {
-		stop("The accurately measured response Y is not specified!")
-	}
+  if (missing(Y)) {
+    stop("The accurately measured response Y is not specified!")
+  }
 
-	if (missing(X)) {
-		stop("The validated covariates in the second-phase are not specified!")
-	}
+  if (missing(X)) {
+    stop("The validated covariates in the second-phase are not specified!")
+  }
 
-	if (length(X_unval) != length(X)) {
-	    stop("The number of columns in X_unval and X is different!")
-	}
+  if (length(X_unval) != length(X)) {
+    stop("The number of columns in X_unval and X is different!")
+  }
 
-	if (!missing(Z)) {
-		vars_ph1 = c(vars_ph1, Z)
-	}
+  if (!missing(Z)) {
+    vars_ph1 = c(vars_ph1, Z)
+  }
 
-    id_exclude = c()
-    for (var in vars_ph1) {
-        id_exclude = union(id_exclude, which(is.na(data[,var])))
-    }
+  id_exclude = c()
+  for (var in vars_ph1) {
+    id_exclude = union(id_exclude, which(is.na(data[,var])))
+  }
 
-	if (verbose) {
-    	message("There are ", nrow(data), " observations in the dataset.")
-    	message(length(id_exclude), " observations are excluded due to missing Y_unval, X_unval, or Z.")
-	}
-	if (length(id_exclude) > 0) {
-		data = data[-id_exclude,]
-	}
+  if (verbose) {
+    message("There are ", nrow(data), " observations in the dataset.")
+    message(length(id_exclude), " observations are excluded due to missing Y_unval, X_unval, or Z.")
+  }
+  if (length(id_exclude) > 0) {
+    data = data[-id_exclude,]
+  }
 
-    n = nrow(data)
-	if (verbose) {
-    	message("There are ", n, " observations in the analysis.")
-	}
+  n = nrow(data)
+  if (verbose) {
+    message("There are ", n, " observations in the analysis.")
+  }
 
-    id_phase1 = which(is.na(data[,Y]))
-    for (var in X) {
-        id_phase1 = union(id_phase1, which(is.na(data[,var])))
-    }
-	if (verbose) {
-		message("There are ", n-length(id_phase1), " observations validated in the second phase.")
-	}
-    #### check data ###############################################################################################
-	###############################################################################################################
-
-
-
-	###############################################################################################################
-	#### prepare analysis #########################################################################################
-    Y_unval_vec = c(as.vector(data[-id_phase1,Y_unval]), as.vector(data[id_phase1,Y_unval]))
-	storage.mode(Y_unval_vec) = "double"
-
-	X_tilde_mat = rbind(as.matrix(data[-id_phase1,X_unval]), as.matrix(data[id_phase1,X_unval]))
-	storage.mode(X_tilde_mat) = "double"
-
-	Bspline_mat = rbind(as.matrix(data[-id_phase1,Bspline]), as.matrix(data[id_phase1,Bspline]))
-	storage.mode(Bspline_mat) = "double"
-
-	Y_vec = as.vector(data[-id_phase1,Y])
-	storage.mode(Y_vec) = "double"
-
-    X_mat = as.matrix(data[-id_phase1,X])
-	storage.mode(X_mat) = "double"
-
-    if (!is.null(Z)) {
-        Z_mat = rbind(as.matrix(data[-id_phase1,Z]), as.matrix(data[id_phase1,Z]))
-		storage.mode(Z_mat) = "double"
-    }
-
-    cov_names = c("Intercept", X)
-	if (!is.null(Z)) {
-		cov_names = c(cov_names, Z)
-	}
-
-	ncov = length(cov_names)
-	X_nc = length(X)
-	rowmap = rep(NA, ncov)
-	res_coefficients = matrix(NA, nrow=ncov, ncol=4)
-	colnames(res_coefficients) = c("Estimate", "SE", "Statistic", "p-value")
-	rownames(res_coefficients) = cov_names
-	res_cov = matrix(NA, nrow=ncov, ncol=ncov)
-	colnames(res_cov) = cov_names
-	rownames(res_cov) = cov_names
-
-	if (is.null(Z)) {
-		Z_mat = as.matrix(rep(1., n))
-		rowmap[1] = ncov
-		rowmap[2:ncov] = 1:X_nc
-	} else {
-		Z_mat = cbind(1, Z_mat)
-		rowmap[1] = X_nc+1
-		rowmap[2:(X_nc+1)] = 1:X_nc
-		rowmap[(X_nc+2):ncov] = (X_nc+2):ncov
-	}
-
-	hn = hn_scale/sqrt(n)
-	#### prepare analysis #########################################################################################
-	###############################################################################################################
-
-	if (verbose)
-	{
-		message("Calling C++ function TwoPhase_MLE0_MEXY")
-	}
-
-	## Ensure every variable is the correct type
-	if (!is.vector(Y_unval_vec))
-	{
-		warning("Y_unval_vec is not a vector!")
-	}
-	if (!is.matrix(X_tilde_mat))
-	{
-		warning("X_tilde_mat is not a matrix!")
-	}
-	if (!is.vector(Y_vec))
-	{
-		warning("Y_vec is not a vector!")
-	}
-	if (!is.matrix(X_mat))
-	{
-		warning("X_mat is not a matrix!")
-	}
-	if (!is.matrix(Z_mat))
-	{
-		warning("Z_mat is not a matrix!")
-	}
-	if (!is.matrix(Bspline_mat))
-	{
-		warning("Bspline_mat is not a matrix!")
-	}
-
-	###############################################################################################################
-	#### analysis #################################################################################################
-	res = .TwoPhase_MLE0_MEXY(Y_unval_vec, X_tilde_mat, Y_vec, X_mat, Z_mat, Bspline_mat, hn, MAX_ITER, TOL, noSE)
-    #### analysis #################################################################################################
-	###############################################################################################################
+  id_phase1 = which(is.na(data[,Y]))
+  for (var in X) {
+    id_phase1 = union(id_phase1, which(is.na(data[,var])))
+  }
+  if (verbose) {
+    message("There are ", n-length(id_phase1), " observations validated in the second phase.")
+  }
+  #### check data ###############################################################################################
+  ###############################################################################################################
 
 
 
-    ###############################################################################################################
-    #### return results ###########################################################################################
- 	res_coefficients[,1] = res$theta[rowmap]
-	res_coefficients[which(res_coefficients[,1] == -999),1] = NA
-	res_cov = res$cov_theta[rowmap, rowmap]
-	res_cov[which(res_cov == -999)] = NA
-	diag(res_cov)[which(diag(res_cov) < 0)] = NA
+  ###############################################################################################################
+  #### prepare analysis #########################################################################################
+  Y_unval_vec = c(as.vector(data[-id_phase1,Y_unval]), as.vector(data[id_phase1,Y_unval]))
+  storage.mode(Y_unval_vec) = "double"
 
-	res_coefficients[,2] = diag(res_cov)
-	res_coefficients[which(res_coefficients[,2] > 0),2] = sqrt(res_coefficients[which(res_coefficients[,2] > 0),2])
+  X_tilde_mat = rbind(as.matrix(data[-id_phase1,X_unval]), as.matrix(data[id_phase1,X_unval]))
+  storage.mode(X_tilde_mat) = "double"
 
-	id_NA = which(is.na(res_coefficients[,1]) | is.na(res_coefficients[,2]))
-	if (length(id_NA) > 0)
-	{
-	    res_coefficients[-id_NA,3] = res_coefficients[-id_NA,1]/res_coefficients[-id_NA,2]
-	    res_coefficients[-id_NA,4] = 1-pchisq(res_coefficients[-id_NA,3]^2, df=1)
-	}
-	else
-	{
-	    res_coefficients[,3] = res_coefficients[,1]/res_coefficients[,2]
-	    res_coefficients[,4] = 1-pchisq(res_coefficients[,3]^2, df=1)
-	}
+  Bspline_mat = rbind(as.matrix(data[-id_phase1,Bspline]), as.matrix(data[id_phase1,Bspline]))
+  storage.mode(Bspline_mat) = "double"
 
-	res_final = list(coefficients=res_coefficients,
-		sigma=sqrt(res$sigma_sq),
-		covariance=res_cov,
-		converge=!res$flag_nonconvergence,
-		converge_cov=!res$flag_nonconvergence_cov)
+  Y_vec = as.vector(data[-id_phase1,Y])
+  storage.mode(Y_vec) = "double"
 
-	res_final <- linear2ph_class(res_final)
+  X_mat = as.matrix(data[-id_phase1,X])
+  storage.mode(X_mat) = "double"
 
-	return(res_final)
-    #### return results ###########################################################################################
-    ###############################################################################################################
+  if (!is.null(Z)) {
+    Z_mat = rbind(as.matrix(data[-id_phase1,Z]), as.matrix(data[id_phase1,Z]))
+    storage.mode(Z_mat) = "double"
+  }
+
+  cov_names = c("Intercept", X)
+  if (!is.null(Z)) {
+    cov_names = c(cov_names, Z)
+  }
+
+  ncov = length(cov_names)
+  X_nc = length(X)
+  rowmap = rep(NA, ncov)
+  res_coefficients = matrix(NA, nrow=ncov, ncol=4)
+  colnames(res_coefficients) = c("Estimate", "SE", "Statistic", "p-value")
+  rownames(res_coefficients) = cov_names
+  res_cov = matrix(NA, nrow=ncov, ncol=ncov)
+  colnames(res_cov) = cov_names
+  rownames(res_cov) = cov_names
+
+  if (is.null(Z)) {
+    Z_mat = as.matrix(rep(1., n))
+    rowmap[1] = ncov
+    rowmap[2:ncov] = 1:X_nc
+  } else {
+    Z_mat = cbind(1, Z_mat)
+    rowmap[1] = X_nc+1
+    rowmap[2:(X_nc+1)] = 1:X_nc
+    rowmap[(X_nc+2):ncov] = (X_nc+2):ncov
+  }
+
+  hn = hn_scale/sqrt(n)
+  #### prepare analysis #########################################################################################
+  ###############################################################################################################
+
+  if (verbose)
+  {
+    message("Calling C++ function TwoPhase_MLE0_MEXY")
+  }
+
+  ## Ensure every variable is the correct type
+  if (!is.vector(Y_unval_vec))
+  {
+    warning("Y_unval_vec is not a vector!")
+  }
+  if (!is.matrix(X_tilde_mat))
+  {
+    warning("X_tilde_mat is not a matrix!")
+  }
+  if (!is.vector(Y_vec))
+  {
+    warning("Y_vec is not a vector!")
+  }
+  if (!is.matrix(X_mat))
+  {
+    warning("X_mat is not a matrix!")
+  }
+  if (!is.matrix(Z_mat))
+  {
+    warning("Z_mat is not a matrix!")
+  }
+  if (!is.matrix(Bspline_mat))
+  {
+    warning("Bspline_mat is not a matrix!")
+  }
+
+  ###############################################################################################################
+  #### analysis #################################################################################################
+  res = .TwoPhase_MLE0_MEXY(Y_unval_vec, X_tilde_mat, Y_vec, X_mat, Z_mat, Bspline_mat, hn, MAX_ITER, TOL, noSE)
+  #### analysis #################################################################################################
+  ###############################################################################################################
+
+
+
+  ###############################################################################################################
+  #### return results ###########################################################################################
+  res_coefficients[,1] = res$theta[rowmap]
+  res_coefficients[which(res_coefficients[,1] == -999),1] = NA
+  res_cov = res$cov_theta[rowmap, rowmap]
+  res_cov[which(res_cov == -999)] = NA
+  diag(res_cov)[which(diag(res_cov) < 0)] = NA
+
+  res_coefficients[,2] = diag(res_cov)
+  res_coefficients[which(res_coefficients[,2] > 0),2] = sqrt(res_coefficients[which(res_coefficients[,2] > 0),2])
+
+  id_NA = which(is.na(res_coefficients[,1]) | is.na(res_coefficients[,2]))
+  if (length(id_NA) > 0)
+  {
+    res_coefficients[-id_NA,3] = res_coefficients[-id_NA,1]/res_coefficients[-id_NA,2]
+    res_coefficients[-id_NA,4] = 1-pchisq(res_coefficients[-id_NA,3]^2, df=1)
+  }
+  else
+  {
+    res_coefficients[,3] = res_coefficients[,1]/res_coefficients[,2]
+    res_coefficients[,4] = 1-pchisq(res_coefficients[,3]^2, df=1)
+  }
+
+  res_final = list(
+    call = model_call,  # Store the call in the object
+    coefficients=res_coefficients,
+    sigma=sqrt(res$sigma_sq),
+    covariance=res_cov,
+    converge=!res$flag_nonconvergence,
+    converge_cov=!res$flag_nonconvergence_cov)
+
+
+  res_final <- linear2ph_class(res_final)
+
+  return(res_final)
+  #### return results ###########################################################################################
+  ###############################################################################################################
 }

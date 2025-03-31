@@ -75,17 +75,17 @@ Analyses aim to combine the two types of data to obtain estimates that
 have low bias and are as efficient as possible.
 
 There are several [R](https://www.r-project.org/) packages that address
-measurement error. A few examples are `augSIMEX`, `attentuation`,
-`decon`, `eivtools`, `GLSME`, `mecor`, `meerva`, `mmc`, `refitME`, and
-`simex`. The various R packages reflect many of the different approaches
-for addressing measurement error such as regression calibration
-[@wang2011deconvolution], SIMEX (i.e., simulation-extrapolation)
-[@lederer2006short], and moment-based corrections [@nab2021mecor], to
-mention a few. Nearly all of these existing R packages deal with errors
-in either the outcome or covariates, but not both, and none of these
-packages permits semiparametric likelihood-based inference that
-incorporates both the error-prone phase-1 data and the validated phase-2
-data.
+measurement error[@Rlanguage]. A few examples are `augSIMEX`,
+`attentuation`, `decon`, `eivtools`, `GLSME`, `mecor`, `meerva`, `mmc`,
+`refitME`, and `simex`. The various R packages reflect many of the
+different approaches for addressing measurement error such as regression
+calibration [@wang2011deconvolution], SIMEX (i.e.,
+simulation-extrapolation) [@lederer2006short], and moment-based
+corrections [@nab2021mecor], to mention a few. Nearly all of these
+existing R packages deal with errors in either the outcome or
+covariates, but not both, and none of these packages permits
+semiparametric likelihood-based inference that incorporates both the
+error-prone phase-1 data and the validated phase-2 data.
 
 SMLE is an estimator that analyzes two-phase data by combining the
 error-prone data on all records with the validated data on a subsample.
@@ -223,7 +223,7 @@ estimation of the error densities.
 Table 1: Main arguments for `linear2ph()` and `logistic2ph()`
 
 | Argument | Description                                                                                                                           |
-|:----------------------|:-----------------------------------------------|
+|:------------------------|:----------------------------------------------|
 | y_unval  | Column name of unvalidated outcome in the input dataset.                                                                              |
 | y        | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
 | x_unval  | Column names of unvalidated covariates in the input dataset.                                                                          |
@@ -244,7 +244,7 @@ the Vanderbilt Comprehensive Care Clinic (VCCC) patient records from
 Table 2: Data dictionary for `mock.vccc`
 
 | Name      | Status      | Type       | Description                                                                          |
-|:----------------|:----------------|:----------------|:-------------------|
+|:-----------------|:-----------------|:-----------------|:------------------|
 | ID        | error-free  |            | Patient ID                                                                           |
 | VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART) initiation                           |
 | VL_val    | validated   |            |                                                                                      |
@@ -255,6 +255,14 @@ Table 2: Data dictionary for `mock.vccc`
 | prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no                                   |
 | Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female                                        |
 | Age       | error-free  | continuous | Age of patient                                                                       |
+
++----------+----------+----------+
+| Column 1 | Column 2 | Column 3 |
++==========+==========+==========+
+| Merged   | B        | C        |
++          +----------+----------+
+|          | E        | F        |
++----------+----------+----------+
 
 # Example: Case study with mock data
 

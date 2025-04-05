@@ -429,7 +429,7 @@ To obtain the SMLEs, we first need to set up the B-spline basis for the
 covariates `VL_unval_l10` (the transformed error-prone VL variable from
 phase one) and `Sex`. The `spline2ph()` function in `sleev` packages can set up the B-spline basis, and combine it with the data input for the final analysis. The column names of the B-spline basis is by default `bs[num]`, where `[num]` is the index of the B-spline basis column.
 
-Here, we use a cubic B-spline basis with the `degree=3` argument in our
+Here, we use a cubic B-spline basis with the `degree = 3` argument in our
 call to the `spline2ph()` function from the `splines` package. The size of the
 basis $s_{n}$ is set to be 20; this was specified through the `size = 20`
 argument. The B-spline basis is set up separately for the two `Sex`
@@ -597,7 +597,7 @@ options(digits = 6)
 print(out, row.names = FALSE)
 ```
 
-It can be seen that the model with $s_n=$ `r maxns` in the B-spline
+It can be seen that the model with $s_n = $ `r maxns` in the B-spline
 basis yields the highest average predicted log-likelihood, and is
 therefore chosen. We note that the average predicted log-likelihoods are
 fairly similar, indicating that the size of the B-spline basis does not

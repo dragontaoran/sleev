@@ -117,11 +117,10 @@ the core algorithms of `logreg2ph` in C++ to speed up the computation,
 and we unified the syntax across functions. To compare the computational
 times, we set up simulations with the same code in the vignette. The
 simulations included phase-one and phase-two sample sizes of 2087 and
-835, respectively, and we performed on a *ACCRE information that I will
-include once the code finishes running*. Across 100 simulations, the
-previous `logreg2ph` took on averaage xx seconds with a standard
-deviation of yy seconds, while the corresponding new function in `sleev`
-took xx seconds with a standard deviation of yy seconds.
+835, respectively, and were performed on a 64-bit Linux OS machine with 8G memory. Across 100 simulations, the
+previous `logreg2ph` took on average 173.19 seconds with a standard
+deviation of 4.40 seconds, while the corresponding new function in `sleev`
+took 109.92 seconds with a standard deviation of 7.91 seconds.
 
 # SMLE for Linear Regression
 
@@ -134,13 +133,12 @@ ${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^{T},\sigma^{2})}^{T}$. When
 we have error-prone data, $Y$ and $\pmb{X}$ are unobserved except for a
 subset of validated records. For unvalidated records (the majority),
 only the error-prone outcome $Y^{*} = Y + W$ and covariates
-$\pmb{X}^{\pmb{*}} = \pmb{X} + \pmb{U}$ are observed in place of $Y$ and
+$\pmb{X}^{*} = \pmb{X} + \pmb{U}$ are observed in place of $Y$ and
 $\pmb{X}$, where $W$ and $\pmb{U}$ are the errors for the outcome and
 covariates, respectively. We assume that $W$ and $\pmb{U}$ are
 independent of $\epsilon$ . With potential errors in our data, a naive
 regression analysis using error-prone variables $Y^{*}$ and
-$\pmb{X}^{\pmb{*}}$ could render misleading results
-[@fuller2009measurement].
+$\pmb{X}^{*}$ could render misleading results [@fuller2009measurement].
 
 We assume that the joint density of the complete data
 $\left( Y^{*},\pmb{X}^{*},W,\pmb{U} \right)$ takes the form
@@ -161,35 +159,35 @@ contributions to the log-likelihood can be obtained by integrating out
 $W$ and $\pmb{U}$.
 
 Let
-$\left( Y_{i}^{*},\pmb{X}_{i}^{\pmb{*}},W_{i},\pmb{U}_{i},V_{i},Y_{i},\pmb{X}_{i} \right)$
+$\left( Y_{i}^{*},\pmb{X}_{i}^{*},W_{i},\pmb{U}_{i},V_{i},Y_{i},\pmb{X}_{i} \right)$
 for $i = 1,\ldots,n$ denote independent and identically distributed
 realizations of
-$\left( Y^{*},\pmb{X}^{\pmb{*}},W,\pmb{U},V,Y,\pmb{X} \right)$ in a
+$\left( Y^{*},\pmb{X}^{*},W,\pmb{U},V,Y,\pmb{X} \right)$ in a
 sample of $n$ subjects. Then, the observed-data log-likelihood is
 proportional to
 
 $$\sum_{i = 1}^{n}{V_{i}\{\log P_{\pmb{\theta}}\left( Y_{i} \middle| \pmb{X}_{i} \right) + \log{P(W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*})\}}}$$
 
-$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{\pmb{*}} \right)dwd\pmb{u} \right\}}\ \ \ \ \ \ \ \ (1)$$
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{*} \right)dwd\pmb{u} \right\}}\ \ \ \ \ \ \ \ (1)$$
 
-where $P(\pmb{X^*})$ is left out, because the error-prone covariates are
-fully observed and thus $P(\pmb{X^*})$ can simply be estimated
+where $P(\pmb{X}^*)$ is left out, because the error-prone covariates are
+fully observed and thus $P(\pmb{X}^*)$ can simply be estimated
 empirically. We estimate the unknown measurement error model,
-$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{\pmb{*}} \right)$ using B-spline
+$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ using B-spline
 sieves. Specifically, we approximate
-$P\left( w,\pmb{u}|\pmb{X}_{i}^{\pmb{*}} \right)$ and
-$\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{\pmb{*}} \right)$ by
-$\sum_{k = 1}^{m}\text{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{\pmb{*}} \right)p_{kj}$
+$P\left( w,\pmb{u}|\pmb{X}_{i}^{*} \right)$ and
+$\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
+$\sum_{k = 1}^{m}\text{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
 and
-$\sum_{k = 1}^{m}\text{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{\pmb{*}} \right)\log p_{kj}$,
+$\sum_{k = 1}^{m}\text{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
 respectively.
 Here, $\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\left( w_{m},\pmb{u}_{m} \right) \right\}$
 are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the validation study,
-$B_{j}^{q}\left( \pmb{X}_{i}^{\pmb{*}} \right)$ is the $j$th B-spline
-basis function of order $q$ evaluated at $\pmb{X}_{i}^{\pmb{*}}$,
+$B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ is the $j$th B-spline
+basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
 $s_{n}$ is the dimension of the B-spline basis, and $p_{kj}$ is the
 coefficient associated with
-$B_{j}^{q}\left( \pmb{X}_{i}^{\pmb{*}} \right)$ and
+$B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ and
 $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1)
 is now approximated by
 
@@ -324,10 +322,17 @@ class `linear2ph` directly.
 
 ```         
 > res_linear
-This model has converged.
+
+Call:
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10", x_unval = "VL_unval_l10", 
+    x = "VL_val_l10", z = "Sex", b_spline = b_spline_names, data = data.linear, 
+    hn_scale = 1, se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+
+The parameter estimation has converged.
+
 Coefficients:
  Intercept VL_val_l10        Sex 
-     4.821     -0.141      0.273 
+ 4.8209166 -0.1413168  0.2727984 
 ```
 
 The `summary()` function for list of class `linear2ph()` returns the
@@ -336,12 +341,17 @@ p-values as follows:
 
 ```         
 > summary(res_linear)
-Model Summary:
+
+Call:
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10", x_unval = "VL_unval_l10", 
+    x = "VL_val_l10", z = "Sex", b_spline = b_spline_names, data = data.linear, 
+    hn_scale = 1, se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+
 Coefficients:
-           Estimate     SE Statistic  p-value
-Intercept     4.821 0.1587     30.39 0.000000
-VL_val_l10   -0.141 0.0398     -3.55 0.000389
-Sex           0.273 0.1089      2.51 0.012229
+             Estimate         SE Statistic      p-value
+Intercept   4.8209166 0.15865204 30.386729 0.0000000000
+VL_val_l10 -0.1413168 0.03983406 -3.547636 0.0003887047
+Sex         0.2727984 0.10888178  2.505455 0.0122294098
 ```
 
 # Acknowledgement

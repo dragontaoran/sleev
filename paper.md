@@ -77,10 +77,9 @@ types of data to obtain estimates that have low bias and are as robust
 and efficient as possible.
 
 There are several [R](https://www.r-project.org/) packages that address
-measurement error [@Rlanguage]. A few examples are `augSIMEX`,
-`attentuation`, `decon`, `eivtools`, `GLSME`, `mecor`, `meerva`, `mmc`,
-`refitME`, and `simex` [@augSIMEX; @attentuation; @decon; @eivtools;
-@GLSME; @mecor; @meerva; @mmc; @refitME; @simex]. The various R packages
+measurement error [@Rlanguage]. A few examples are `augSIMEX`[@augSIMEX],
+`attentuation`[@attentuation], `decon`[@decon], `eivtools`[@eivtools], `GLSME`[@GLSME], `mecor`[@mecor], `meerva`[@meerva], `mmc`[@mmc],
+`refitME`[@refitME], and `simex` [@SIMEX]. The various R packages
 reflect many different approaches, such as regression calibration
 [@decon], SIMEX (i.e., simulation-extrapolation) [@SIMEX], and
 moment-based corrections [@mecor], to mention a few. Nearly all of these
@@ -224,7 +223,7 @@ of the error densities.
 Table 1: Main arguments for the `linear2ph()` and `logistic2ph()` functions
 
 | Argument | Description                                                                                                                           |
-|:----------------------|:------------------------------------------------|
+|:---------|:---------------------------------------------------------------|
 | y_unval  | Column name of unvalidated outcome in the input dataset.                                                                              |
 | y        | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
 | x_unval  | Column names of unvalidated covariates in the input dataset.                                                                          |
@@ -237,6 +236,7 @@ Table 1: Main arguments for the `linear2ph()` and `logistic2ph()` functions
 | tol      | Convergence criterion. The default is 0.0001.                                                                                         |
 | max_iter | Maximum number of iterations in the EM algorithm. The default is 1000.                                                                |
 | verbose  | Print analysis details when set to TRUE. The default is FALSE.                                                                        |
+
 # Example: Case study with mock data
 
 For demonstration, the `sleev` package includes a dataset constructed to mimic data from
@@ -246,7 +246,7 @@ the Vanderbilt Comprehensive Care Clinic (VCCC) patient records from
 Table 2: Data dictionary for `mock.vccc`
 
 | Name      | Status      | Type       | Description                                        |
-|:-----------------|:-----------------|:-----------------|:------------------|
+|:----------|:------------|:-----------|:---------------------------------|
 | ID        | error-free  |            | Patient ID                                         |
 | VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy          |
 | VL_val    | validated   |            | (ART) initiation                                   |
@@ -324,9 +324,10 @@ class `linear2ph` directly.
 > res_linear
 
 Call:
-linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10", x_unval = "VL_unval_l10", 
-    x = "VL_val_l10", z = "Sex", b_spline = b_spline_names, data = data.linear, 
-    hn_scale = 1, se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
+          x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex", 
+          b_spline = b_spline_names, data = data.linear, hn_scale = 1, 
+          se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
 
 The parameter estimation has converged.
 
@@ -343,9 +344,10 @@ p-values as follows:
 > summary(res_linear)
 
 Call:
-linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10", x_unval = "VL_unval_l10", 
-    x = "VL_val_l10", z = "Sex", b_spline = b_spline_names, data = data.linear, 
-    hn_scale = 1, se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
+          x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex", 
+          b_spline = b_spline_names, data = data.linear, hn_scale = 1, 
+          se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
 
 Coefficients:
              Estimate         SE Statistic      p-value
@@ -359,4 +361,6 @@ Sex         0.2727984 0.10888178  2.505455 0.0122294098
 This research was supported by the National Institute of Health grants
 R01AI131771, R01HL094786, and P30AI110527 and the 2022 Biostatistics
 Faculty Development Award from the Department of Biostatistics at
-Vanderbilt University Medical Center.
+Vanderbilt University Medical Center. This work leveraged the resources provided by the Vanderbilt Advanced Computing Center for Research and Education (ACCRE), a collaboratory operated by and for Vanderbilt faculty. 
+
+# References

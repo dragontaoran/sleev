@@ -171,3 +171,22 @@ $$\sum_{i = 1}^{n}{V_{i}\{\log P_{\pmb{\theta}}\left( Y_{i} \middle| \pmb{X}_{i}
 
 $$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{*} \right)dwd\pmb{u} \right\}},\ \ \ \ \ \ \ \ (1)$$
 
+where $P(\pmb{X}^*)$ is left out, because the error-prone covariates are
+fully observed and thus $P(\pmb{X}^*)$ can simply be estimated
+empirically. We estimate the unknown measurement error model,
+$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ using B-spline
+sieves. Specifically, we approximate
+$P\left( w,\pmb{u}|\pmb{X}_{i}^{*} \right)$ and
+$\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
+$\sum_{k = 1}^{m}\mathrm{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
+  and
+$\sum_{k = 1}^{m}\mathrm{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
+respectively. Here,
+$\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\n\left( w_{m},\pmb{u}_{m} \right) \right\}$
+  are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the
+validation study, $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ is the $j$th
+B-spline basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
+$s_{n}$ is the dimension of the B-spline basis, and $p_{kj}$ is the
+coefficient associated with $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$
+  and $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1) is now
+approximated by

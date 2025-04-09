@@ -122,3 +122,86 @@ simulations included phase-one and phase-two sample sizes of 2087 and
 average 173.19 seconds with a standard deviation of 4.40 seconds, while
 the corresponding new function in `sleev` took 109.92 seconds with a
 standard deviation of 7.91 seconds.
+
+
+# SMLE for Linear Regression
+
+In this section, we briefly introduce the SMLE for linear regression.
+Suppose that we want to fit a standard linear regression model for a
+continuous outcome $Y$ and covariates $\pmb{X}$:
+$Y = \alpha + \boldsymbol{\beta}^\mathrm{T}\pmb{X} + \epsilon$, where
+$\epsilon\sim N({0,\sigma}^{2})$. Our goal is to obtain estimates of
+${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^\mathrm{T},\sigma^{2})}^\mathrm{T}$.
+When we have error-prone data, $Y$ and $\pmb{X}$ are unobserved except
+for a subset of validated records. For unvalidated records (the
+majority), only the error-prone outcome $Y^{*} = Y + W$ and covariates
+$\pmb{X}^{*} = \pmb{X} + \pmb{U}$ are observed in place of $Y$ and
+$\pmb{X}$, where $W$ and $\pmb{U}$ are the errors for the outcome and
+covariates, respectively. We assume that $W$ and $\pmb{U}$ are
+independent of $\epsilon$ . With potential errors in our data, a naive
+regression analysis using error-prone variables $Y^{*}$ and
+$\pmb{X}^{*}$ could render misleading results [@fuller2009measurement].
+
+We assume that the joint density of the complete data
+$\left( Y^{*},\pmb{X}^{*},W,\pmb{U} \right)$ takes the form
+
+$$P\left( Y^{*},\pmb{X}^{*},\ W,\ \pmb{U} \right) = P\left( Y^{*}|\pmb{X}^{*},\ W,\ \pmb{U} \right)P\left( W,\ \pmb{U|}\pmb{X}^{*}\  \right)P\left( \pmb{X}^{*} \right)$$
+
+$$= P_{\pmb{\theta}}\left( Y|X \right)P\left( W,\ \pmb{U}|\pmb{X}^{*} \right)P\left( \pmb{X}^{*} \right),$$
+
+where $P( \cdot )$ and $P\left( \cdot | \cdot \right)$ denote density
+and conditional density functions, respectively. Specifically,
+$P_{\pmb{\theta}}\left( Y|\pmb{X} \right)$ then refers to the
+conditional density function of the linear regression model of $Y$ and
+$\pmb{X}$. Denote the validation indicator variable by $V$, with $V = 1$
+indicating that a record was validated and $V = 0$ otherwise. For
+records with $V = 0$, their measurement errors
+$\left( W,\pmb{U} \right)$ are missing, and therefore their
+contributions to the log-likelihood can be obtained by integrating out
+$W$ and $\pmb{U}$.
+
+Let
+$\left( Y_{i}^{*},\pmb{X}_{i}^{*},W_{i},\pmb{U}_{i},V_{i},Y_{i},\pmb{X}_{i} \right)$
+for $i = 1,\ldots,n$ denote independent and identically distributed
+realizations of $\left( Y^{*},\pmb{X}^{*},W,\pmb{U},V,Y,\pmb{X} \right)$
+in a sample of $n$ subjects. Then, the observed-data log-likelihood is
+proportional to
+
+$$\sum_{i = 1}^{n}{V_{i}\{\log P_{\pmb{\theta}}\left( Y_{i} \middle| \pmb{X}_{i} \right) + \log{P(W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*})\}}}$$
+
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{*} \right)dwd\pmb{u} \right\}},\ \ \ \ \ \ \ \ (1)$$
+
+where $P(\pmb{X}^*)$ is left out, because the error-prone covariates are
+fully observed and thus $P(\pmb{X}^*)$ can simply be estimated
+empirically. We estimate the unknown measurement error model,
+$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ using B-spline
+sieves. Specifically, we approximate
+$P\left( w,\pmb{u}|\pmb{X}_{i}^{*} \right)$ and
+$\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
+$\sum_{k = 1}^{m}\mathrm{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
+and
+$\sum_{k = 1}^{m}\mathrm{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
+respectively. Here,
+$\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\n\left( w_{m},\pmb{u}_{m} \right) \right\}$
+are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the
+validation study, $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ is the $j$th
+B-spline basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
+$s_{n}$ is the dimension of the B-spline basis, and $p_{kj}$ is the
+coefficient associated with $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$
+and $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1) is now
+approximated by
+
+$$\sum_{i = 1}^{n}V_{i}\left[\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\left\{{\mathrm{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\right\}\right]$$
+
+$$+ \sum_{i = 1}^{n}\log{\left[\sum_{k = 1}^{m}\left\{P_{\pmb{\theta}}\left( Y_{i}^{*} - w_{k}|\pmb{X}_{i}^{*} - \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}(\pmb{X}_{i}^{*})\log{p_{kj}}\right\}\right]}. \ \ \ \ \ \ \ \ (2)$$
+
+The maximization of expression (2) is carried out through an EM
+algorithm to find the SMLEs $\widehat{\pmb{\theta}}$ and
+${\widehat{p}}_{kj}$. The covariance matrix of the SMLE
+$\widehat{\pmb{\theta}}$ is obtained through the method of profile
+likelihood [@murphy2000profile].
+
+The SMLEs for logistic regression are similar to linear regression and
+described in the [package
+vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf),
+and the theoretical properties can be found in @lotspeich2022efficient.

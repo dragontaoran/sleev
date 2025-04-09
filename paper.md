@@ -1,6 +1,5 @@
 ---
-title: 'sleev: An R Package for Semiparametric Likelihood Estimation with Errors in
-  Variables'
+title: 'sleev: An R Package for Semiparametric Likelihood Estimation with Errors in Variables'
 tags:
   - R
   - measurement error
@@ -129,9 +128,9 @@ standard deviation of 7.91 seconds.
 In this section, we briefly introduce the SMLE for linear regression.
 Suppose that we want to fit a standard linear regression model for a
 continuous outcome $Y$ and covariates $\pmb{X}$:
-$Y = \alpha + \boldsymbol{\beta}^\rm{T}\pmb{X} + \epsilon$, where
+$Y = \alpha + \boldsymbol{\beta}^\mathrm{T}\pmb{X} + \epsilon$, where
 $\epsilon\sim N({0,\sigma}^{2})$. Our goal is to obtain estimates of
-${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^\rm{T},\sigma^{2})}^\rm{T}$.
+${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^\mathrm{T},\sigma^{2})}^\mathrm{T}$.
 When we have error-prone data, $Y$ and $\pmb{X}$ are unobserved except
 for a subset of validated records. For unvalidated records (the
 majority), only the error-prone outcome $Y^{*} = Y + W$ and covariates
@@ -178,9 +177,9 @@ $P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ using B-spline
 sieves. Specifically, we approximate
 $P\left( w,\pmb{u}|\pmb{X}_{i}^{*} \right)$ and
 $\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
-$\sum_{k = 1}^{m}\rm{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
+$\sum_{k = 1}^{m}\mathrm{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
 and
-$\sum_{k = 1}^{m}\rm{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
+$\sum_{k = 1}^{m}\mathrm{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
 respectively. Here,
 $\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\n\left( w_{m},\pmb{u}_{m} \right) \right\}$
 are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the
@@ -191,7 +190,7 @@ coefficient associated with $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$
 and $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1) is now
 approximated by
 
-$$\sum_{i = 1}^{n}V_{i}\left[\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\left\{{\rm{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\right\}\right]$$
+$$\sum_{i = 1}^{n}V_{i}\left[\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\left\{{\mathrm{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\right\}\right]$$
 
 $$+ \sum_{i = 1}^{n}\log{\left[\sum_{k = 1}^{m}\left\{P_{\pmb{\theta}}\left( Y_{i}^{*} - w_{k}|\pmb{X}_{i}^{*} - \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}(\pmb{X}_{i}^{*})\log{p_{kj}}\right\}\right]}. \ \ \ \ \ \ \ \ (2)$$
 
@@ -224,11 +223,11 @@ of the error densities.
 Table 1: Main arguments for the `linear2ph()` and `logistic2ph()`
 functions
 
-| Argument | Description                                                                                                                             |
-|:--------------------|:--------------------------------------------------|
-| y_unval  | Column name of unvalidated outcome in the input dataset.                                                                                |
-| y        | Column name of validated outcome in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two.     |
-| x_unval  | Column names of unvalidated covariates in the input dataset.                                                                            |
+| Argument | Description|
+|:---------|:--------------------------------------------------|
+| y_unval  | Column name of unvalidated outcome in the input dataset. |
+| y        | Column name of validated outcome in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two.|
+| x_unval  | Column names of unvalidated covariates in the input dataset. |
 | x        | Column names of validated covariates in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two. |
 | z        | Column names of error-free covariates in the input dataset.                                                                             |
 | b_spline | Column names of the B-spline basis in the input dataset.                                                                                |
@@ -266,8 +265,7 @@ the `mock.vccc` dataset. Specifically, we show how to fit a linear
 regression model in the presence of errors in both the outcome and
 covariates using the linear2ph() function. Situations with more
 covariates and examples with logistic regression are included in the
-[package
-vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).
+[package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).
 
 This example fits a linear regression model with CD4 count at
 antiretroviral therapy (ART) initiation regressed on viral load (VL) at

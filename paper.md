@@ -189,4 +189,19 @@ B-spline basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
 $s_{n}$ is the dimension of the B-spline basis, and $p_{kj}$ is the
 coefficient associated with $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$
   and $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1) is now
-approximated by
+approximated by 
+
+$$\sum_{i = 1}^{n}V_{i}\left[\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\left\{{\mathrm{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\right\}\right]$$
+  
+  $$+ \sum_{i = 1}^{n}\log{\left[\sum_{k = 1}^{m}\left\{P_{\pmb{\theta}}\left( Y_{i}^{*} - w_{k}|\pmb{X}_{i}^{*} - \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}(\pmb{X}_{i}^{*})\log{p_{kj}}\right\}\right]}. \ \ \ \ \ \ \ \ (2)$$
+  
+  The maximization of expression (2) is carried out through an EM
+algorithm to find the SMLEs $\widehat{\pmb{\theta}}$ and
+${\widehat{p}}_{kj}$. The covariance matrix of the SMLE
+$\widehat{\pmb{\theta}}$ is obtained through the method of profile
+likelihood [@murphy2000profile].
+
+The SMLEs for logistic regression are similar to linear regression and
+described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf),
+and the theoretical properties can be found in @lotspeich2022efficient.
+

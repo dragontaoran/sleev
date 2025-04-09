@@ -181,12 +181,4 @@ $\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
 $\sum_{k = 1}^{m}\mathrm{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)p_{kj}$
   and
 $\sum_{k = 1}^{m}\mathrm{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
-respectively. Here,
-$\left\{ \left( w_{1},\pmb{u}_{1} \right),...,$ $\left( w_{m},\pmb{u}_{m} \right) \right\}$
-  are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the
-validation study, $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ is the $j$th
-B-spline basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
-$s_{n}$ is the dimension of the B-spline basis, and $p_{kj}$ is the
-coefficient associated with $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$
-  and $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1) is now
-approximated by
+respectively. 

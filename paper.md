@@ -227,17 +227,17 @@ functions
 | Argument | Description                                                                                                                           |
 |:----------------|:------------------------------------------------------|
 | y_unval  | Column name of unvalidated outcome in the input dataset.                                                                              |
-| y        | Column name of validated outcome in the input dataset. NAs in the input will be counted as individuals not selected in phase two.     |
+| y        | Column name of validated outcome in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two.     |
 | x_unval  | Column names of unvalidated covariates in the input dataset.                                                                          |
-| x        | Column names of validated covariates in the input dataset. NAs in the input will be counted as individuals not selected in phase two. |
+| x        | Column names of validated covariates in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two. |
 | z        | Column names of error-free covariates in the input dataset.                                                                           |
 | b_spline | Column names of the B-spline basis in the input dataset.                                                                              |
 | data     | Dataset                                                                                                                               |
-| hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is 1.                 |
-| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is TRUE.                                  |
-| tol      | Convergence criterion. The default is 0.0001.                                                                                         |
-| max_iter | Maximum number of iterations in the EM algorithm. The default is 1000.                                                                |
-| verbose  | Print analysis details when set to TRUE. The default is FALSE.                                                                        |
+| hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is `1`.                 |
+| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is `TRUE`.                                  |
+| tol      | Convergence criterion. The default is `0.0001`.                                                                                         |
+| max_iter | Maximum number of iterations in the EM algorithm. The default is `1000`.                                                                |
+| verbose  | Print analysis details when set to `TRUE`. The default is `FALSE`.                                                                        |
 
 # Example: Case study with mock data
 

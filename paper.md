@@ -205,3 +205,175 @@ The SMLEs for logistic regression are similar to linear regression and
 described in the [package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf),
 and the theoretical properties can be found in @lotspeich2022efficient.
 
+# Functionalities of the `sleev` R Package
+
+The `sleev` package provides a user-friendly way to obtain the SMLEs and
+their standard errors. The package can be installed from
+[CRAN](https://cran.r-project.org/web/packages/sleev/index.html) or
+[GitHub](https://github.com/dragontaoran/sleev). The `sleev` package
+includes two main functions: `linear2ph()` and `logistic2ph()`, to fit
+linear and logistic regressions, respectively, under two-phase sampling
+with an error-prone outcome and covariates. The input arguments are
+similar for the two functions and listed in Table 1. In addition to the
+arguments for error-prone and error-free outcome and covariates, the
+user needs to specify the B-spline matrix
+$B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ to be used in the estimation
+of the error densities.
+
+Table 1: Main arguments for the `linear2ph()` and `logistic2ph()`
+functions
+
+| Argument | Description|
+|:---------|:--------------------------------------------------|
+| y_unval  | Column name of unvalidated outcome in the input dataset. |
+| y        | Column name of validated outcome in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two.|
+| x_unval  | Column names of unvalidated covariates in the input dataset. |
+| x        | Column names of validated covariates in the input dataset. `NA`s in the input will be counted as individuals not selected in phase two. |
+| z        | Column names of error-free covariates in the input dataset.                                                                             |
+| b_spline | Column names of the B-spline basis in the input dataset.                                                                                |
+| data     | Dataset                                                                                                                                 |
+| hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is `1`.                 |
+| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is `TRUE`.                                  |
+| tol      | Convergence criterion. The default is `0.0001`.                                                                                         |
+| max_iter | Maximum number of iterations in the EM algorithm. The default is `1000`.                                                                |
+| verbose  | Print analysis details when set to `TRUE`. The default is `FALSE`.                                                                      |
+
+# Example: Case study with mock data
+
+For demonstration, the `sleev` package includes a dataset constructed to
+mimic data from the Vanderbilt Comprehensive Care Clinic (VCCC) patient
+records from @giganti2020accounting. Table 2 describes the variables in
+this dataset.
+
+Table 2: Data dictionary for `mock.vccc`
+
+| Name      | Status      | Type       | Description                                         |
+|:-----------------|:------------|:------------|:----------------------------|
+| ID        | error-free  |            | Patient ID                                          |
+| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART)     |
+| VL_val    | validated   | continuous | initiation                                          |
+| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within one year of |
+| ADE_val   | validated   | binary     | ART initiation: 1 - yes, 0 -- no                    |
+| CD4_unval | error-prone | continuous | CD4 count at ART initiation                         |
+| CD4_val   | validated   | continuous |                                                     |
+| prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no  |
+| Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female       |
+| Age       | error-free  | continuous | Age of patient                                      |
+
+We now illustrate how to obtain the SMLEs using the `sleev` package with
+the `mock.vccc` dataset. Specifically, we show how to fit a linear
+regression model in the presence of errors in both the outcome and
+covariates using the linear2ph() function. Situations with more
+covariates and examples with logistic regression are included in the
+[package vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).
+
+This example fits a linear regression model with CD4 count at
+antiretroviral therapy (ART) initiation regressed on viral load (VL) at
+ART initiation, adjusting for sex at birth. Both CD4 and VL are
+error-prone, partially validated variables, whereas sex is error-free.
+Because of skewness, we often transform both CD4 and VL. In our
+analysis, CD4 was divided by 10 and square root transformed, and VL was
+$\log_{10}$ transformed:
+
+```         
+library("sleev")
+data("mock.vccc")
+mock.vccc$CD4_val_sq10 <- sqrt(mock.vccc$CD4_val / 10)
+mock.vccc$CD4_unval_sq10 <- sqrt(mock.vccc$CD4_unval / 10)
+mock.vccc$VL_val_l10 <- log10(mock.vccc$VL_val)
+mock.vccc$VL_unval_l10 <- log10(mock.vccc$VL_unval)
+```
+
+To obtain the SMLEs, we first need to set up the B-spline basis for the
+error-prone covariate `VL_unval_l10` (the transformed VL variable from
+phase one) and `Sex` . The `spline2ph()` function in `sleev` packages
+can set up the B-spline basis, and combine it with the data input for
+the final analysis. Here, we use a cubic B-spline basis with the
+`degree = 3` argument. The size of the basis $s_{n}$ is set to be 20,
+specified through the `size = 20` argument. More details regarding order
+and size selection, as well as run time comparison of B-spline basis,
+are discussed in the
+[vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf).
+To allow possible heterogeneity in error distribution between males and
+females, we can set up B-spline basis separately and proportionally for
+the two `Sex` groups by specifying argument `group = "Sex"`. The
+described B-spline basis is constructed as follows.
+
+```         
+sn <- 20
+b_spline_names <- paste0("bs", 1:sn)
+data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn,
+                         degree = 3,  bs_names = b_spline_names, group = "Sex")
+```
+
+Alternatively, if the investigator has prior knowledge that the errors
+in `VL_unval_l10` are likely to be homogeneous, one may fit a simpler
+model by not stratifying the B-spline basis by `Sex`.
+
+Having constructed the B-spline basis, the SMLEs can be obtained by
+running the `linear2ph()` function on `data.linear`, as shown in the
+code below. Again, the inputs are explained in Table 1. The fitted SMLEs
+are stored in a list object of class `linear2ph`. Here, we assign the
+fitted SMLEs to the variable name `res_linear`. The list of class
+`linear2ph` contains five components: `coefficient`, `covariance`,
+`sigma`, `converge`, and `converge_cov`.
+
+```         
+res_linear <- linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
+                        x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex",
+                        b_spline = b_spline_names, data = data.linear,
+                        hn_scale = 1, se = TRUE, tol = 1e-04, 
+                        max_iter = 1000, verbose = FALSE)
+```
+
+We should first check if the EM algorithms for estimating the regression
+coefficients and their covariance matrix converged by using the
+`print()` for class `linear2ph` directly.
+
+```         
+> res_linear
+
+Call:
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
+          x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex", 
+          b_spline = b_spline_names, data = data.linear, hn_scale = 1, 
+          se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+
+The parameter estimation has converged.
+
+Coefficients:
+ Intercept VL_val_l10        Sex 
+ 4.8209166 -0.1413168  0.2727984 
+```
+
+The `summary()` function for list of class `linear2ph()` returns the
+estimated coefficients, their standard errors, test statistics, and
+p-values as follows:
+
+```         
+> summary(res_linear)
+
+Call:
+linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
+          x_unval = "VL_unval_l10", x = "VL_val_l10", z = "Sex", 
+          b_spline = b_spline_names, data = data.linear, hn_scale = 1, 
+          se = TRUE, tol = 1e-04, max_iter = 1000, verbose = FALSE)
+
+Coefficients:
+             Estimate         SE Statistic      p-value
+Intercept   4.8209166 0.15865204 30.386729 0.0000000000
+VL_val_l10 -0.1413168 0.03983406 -3.547636 0.0003887047
+Sex         0.2727984 0.10888178  2.505455 0.0122294098
+```
+
+# Acknowledgement
+
+This research was supported by the National Institute of Health grants
+R01AI131771, R01HL094786, and P30AI110527 and the 2022 Biostatistics
+Faculty Development Award from the Department of Biostatistics at
+Vanderbilt University Medical Center. This work leveraged the resources
+provided by the Vanderbilt Advanced Computing Center for Research and
+Education (ACCRE), a collaboratory operated by and for Vanderbilt
+faculty.
+
+# References

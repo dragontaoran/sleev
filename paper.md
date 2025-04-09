@@ -78,7 +78,7 @@ and efficient as possible.
 
 There are several [R](https://www.r-project.org/) packages that address
 measurement error [@Rlanguage]. A few examples are `augSIMEX`[@augSIMEX],
-`attentuation`[@attentuation], `decon`[@decon], `eivtools`[@eivtools], `GLSME`[@GLSME], `mecor`[@mecor], `meerva`[@meerva], `mmc`[@mmc],
+`attenuation`[@attenuation], `decon`[@decon], `eivtools`[@eivtools], `GLSME`[@GLSME], `mecor`[@mecor], `meerva`[@meerva], `mmc`[@mmc],
 `refitME`[@refitME], and `simex` [@SIMEX]. The various R packages
 reflect many different approaches, such as regression calibration
 [@decon], SIMEX (i.e., simulation-extrapolation) [@SIMEX], and
@@ -91,7 +91,7 @@ error-prone phase-one data and the validated phase-two data.
 The sieve maximum likelihood estimator (SMLE) is an estimator that
 analyzes two-phase data by combining the error-prone data on all records
 with the validated data on a subsample. By leveraging all available
-data, the SMLE operates with high efficiency. [@tao2021efficient;
+data, the SMLE operates with high efficiency [@tao2021efficient;
 @lotspeich2022efficient]. Since it does not make any parametric
 assumptions on the error model, the SMLE is also robust. For example,
 @tao2021efficient performed a set of simulations highlighting the SMLE's
@@ -123,12 +123,12 @@ took 109.92 seconds with a standard deviation of 7.91 seconds.
 
 # SMLE for Linear Regression
 
-In this section, we briefly introduce the the SMLE for linear
+In this section, we briefly introduce the SMLE for linear
 regression. Suppose that we want to fit a standard linear regression
 model for a continuous outcome $Y$ and covariates $\pmb{X}$:
-$Y = \alpha + \boldsymbol{\beta}^{T}\pmb{X} + \epsilon$, where
+$Y = \alpha + \boldsymbol{\beta}^\text{T}\pmb{X} + \epsilon$, where
 $\epsilon\sim N({0,\sigma}^{2})$. Our goal is to obtain estimates of
-${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^{T},\sigma^{2})}^{T}$. When
+${\pmb{\theta} = (\alpha,\boldsymbol{\beta}^\text{T},\sigma^{2})}^\text{T}$. When
 we have error-prone data, $Y$ and $\pmb{X}$ are unobserved except for a
 subset of validated records. For unvalidated records (the majority),
 only the error-prone outcome $Y^{*} = Y + W$ and covariates
@@ -144,7 +144,7 @@ $\left( Y^{*},\pmb{X}^{*},W,\pmb{U} \right)$ takes the form
 
 $$P\left( Y^{*},\pmb{X}^{*},\ W,\ \pmb{U} \right) = P\left( Y^{*}|\pmb{X}^{*},\ W,\ \pmb{U} \right)P\left( W,\ \pmb{U|}\pmb{X}^{*}\  \right)P\left( \pmb{X}^{*} \right)$$
 
-$$= P_{\pmb{\theta}}\left( Y|X \right)P\left( W,\ \pmb{U|}\pmb{X}^{*} \right)P\left( \pmb{X}^{*} \right)$$
+$$= P_{\pmb{\theta}}\left( Y|X \right)P\left( W,\ \pmb{U|}\pmb{X}^{*} \right)P\left( \pmb{X}^{*} \right),$$
 
 where $P( \cdot )$ and $P\left( \cdot | \cdot \right)$ denote density
 and conditional density functions, respectively. Specifically,
@@ -167,7 +167,7 @@ proportional to
 
 $$\sum_{i = 1}^{n}{V_{i}\{\log P_{\pmb{\theta}}\left( Y_{i} \middle| \pmb{X}_{i} \right) + \log{P(W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*})\}}}$$
 
-$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{*} \right)dwd\pmb{u} \right\}}\ \ \ \ \ \ \ \ (1)$$
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta}}\left( Y_{i}^{*} - w|\pmb{X}_{i}^{*} - \pmb{u} \right)P\left( w,\pmb{u} \middle| \pmb{X}_{i}^{*} \right)dwd\pmb{u} \right\}},\ \ \ \ \ \ \ \ (1)$$
 
 where $P(\pmb{X}^*)$ is left out, because the error-prone covariates are
 fully observed and thus $P(\pmb{X}^*)$ can simply be estimated
@@ -180,7 +180,7 @@ $\sum_{k = 1}^{m}\text{I}\left( w = w_{k},\pmb{u} = \pmb{u}_{k} \right)\sum_{j =
 and
 $\sum_{k = 1}^{m}\text{I}\left( W_{i} = w_{k},\pmb{U}_{i} = \pmb{u}_{k} \right)\sum_{j = 1}^{s_{n}}B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)\log p_{kj}$,
 respectively.
-Here, $\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\left( w_{m},\pmb{u}_{m} \right) \right\}$
+Here, $\left\{ \left( w_{1},\pmb{u}_{1} \right),...,\n\left( w_{m},\pmb{u}_{m} \right) \right\}$
 are the $m$ distinct observed $\left( W,\pmb{U} \right)$ values from the validation study,
 $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ is the $j$th B-spline
 basis function of order $q$ evaluated at $\pmb{X}_{i}^{*}$,
@@ -190,9 +190,9 @@ $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ and
 $\left( w_{k},\pmb{u}_{k} \right)$. The expression (1)
 is now approximated by
 
-$$\sum_{i = 1}^{n}V_{i}\left\{\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\big\{{\text{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\big\}\right\}$$
+$$\sum_{i = 1}^{n}V_{i}\left\[\log P_{\pmb{\theta}}\left(Y_{i} \middle| \pmb{X}_{i} \right) +\sum_{k = 1}^{m}\left\{{\text{I}(W_{i}=w_{k},\pmb{U}_{i}= \pmb{u}_{k})\sum_{j=1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}}\log{p_{kj}}\right\}\right\]$$
 
-$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \sum_{k = 1}^{m}\{{P_{\pmb{\theta}}\left( Y_{i}^{*} - w_{k}|\pmb{X}_{i}^{*} - \pmb{u}_{k} \right)}\sum_{j = 1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}\log{p_{kj}\}} \right\}}.\ \ \ \ \ \ \ (2)$$
+$$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\[\sum_{k = 1}^{m}\left\{{P_{\pmb{\theta}}\left( Y_{i}^{*} - w_{k}|\pmb{X}_{i}^{*} - \pmb{u}_{k} \right)}\sum_{j = 1}^{s_{n}}{B_{j}^{q}(\pmb{X}_{i}^{*})}\log{p_{kj}\right\}} \right\]}.\ \ \ \ \ \ \ (2)$$
 
 The maximization of expression (2) is carried out through an EM
 algorithm to find the SMLEs $\widehat{\pmb{\theta}}$ and
@@ -204,7 +204,7 @@ The SMLEs for logistic regression are similar to linear regression and
 described in the [package
 vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf),
 and the theoretical properties can be found in
-[@lotspeich2022efficient].
+@lotspeich2022efficient.
 
 # Functionalities of the `sleev` R Package
 
@@ -246,14 +246,14 @@ the Vanderbilt Comprehensive Care Clinic (VCCC) patient records from
 Table 2: Data dictionary for `mock.vccc`
 
 | Name      | Status      | Type       | Description                                        |
-|:----------|:------------|:-----------|:---------------------------------|
+|:----------|:------------|:-----------|:---------------------------------------------------|
 | ID        | error-free  |            | Patient ID                                         |
-| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy          |
-| VL_val    | validated   |            | (ART) initiation                                   |
-| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within            |
-| ADE_val   | validated   |            | one year of ART initiation: 1 - yes, 0 -- no       |
+| VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART)    |
+| VL_val    | validated   | continuous | initiation                                         |
+| ADE_unval | error-prone | binary     | Had an AIDS-defining event (ADE) within one year of|
+| ADE_val   | validated   | binary     | ART initiation: 1 - yes, 0 -- no                   |
 | CD4_unval | error-prone | continuous | CD4 count at ART initiation                        |
-| CD4_val   | validated   |            |                                                    |
+| CD4_val   | validated   | continuous |                                                    |
 | prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no |
 | Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female      |
 | Age       | error-free  | continuous | Age of patient                                     |
@@ -281,13 +281,13 @@ mock.vccc$VL_val_l10 <- log10(mock.vccc$VL_val)
 mock.vccc$VL_unval_l10 <- log10(mock.vccc$VL_unval)
 ```
 
-To obtain the SMLEs, we first need to set up the B-spline basis for the error-prone covariate `VL_unval_l10` and `Sex` (the transformed VL variable from
-phase one). The `spline2ph()` function in `sleev` packages can set up
+To obtain the SMLEs, we first need to set up the B-spline basis for the error-prone covariate `VL_unval_l10` (the transformed VL variable from
+phase one) and `Sex` . The `spline2ph()` function in `sleev` packages can set up
 the B-spline basis, and combine it with the data input for the final
 analysis. Here, we use a cubic B-spline basis with the `degree = 3`
 argument. The size of the basis $s_{n}$ is set to be 20, specified
 through the `size = 20` argument. More details regarding order and size
-selection, as well as run time comparison of B-spline basis,  are discussed in the [vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf). To allow possible heterogeneity in error distribution between males and female, we can set up B-spline
+selection, as well as run time comparison of B-spline basis,  are discussed in the [vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf). To allow possible heterogeneity in error distribution between males and females, we can set up B-spline
 basis separately and proportionally for the two `Sex` groups by specifying argument `group = "Sex"`. The described B-spline basis is constructed as follows.
 
 ```         

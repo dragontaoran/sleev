@@ -246,18 +246,18 @@ this dataset.
 
 Table 2: Data dictionary for `mock.vccc`
 
-| Name       | Status      | Type       | Description                                         |
-|:-----------|:------------|:-----------|:----------------------------------------------------|
-| ID         | error-free  |            | Patient ID                                          |
-| VL_unval   | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART)     |
-| VL_val     | validated   | continuous | initiation                                          |
-| ADE_unval  | error-prone | binary     | Had an AIDS-defining event (ADE) within one         |
-| ADE_val    | validated   | binary     | year of ART initiation: 1 - yes, 0 -- no            |
-| CD4_unval  | error-prone | continuous | CD4 count at ART initiation                         |
-| CD4_val    | validated   | continuous |                                                     |
-| Prior_ART  | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no  |
-| Sex        | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female       |
-| Age        | error-free  | continuous | Age of patient                                      |
+| Name        | Status      | Type       | Description                                         |
+|:------------|:------------|:-----------|:----------------------------------------------------|
+| ID          | error-free  |            | Patient ID                                          |
+| VL_unval    | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART)     |
+| VL_val      | validated   | continuous | initiation                                          |
+| ADE_unval   | error-prone | binary     | Had an AIDS-defining event (ADE) within one         |
+| ADE_val     | validated   | binary     | year of ART initiation: 1 - yes, 0 -- no            |
+| CD4_unval   | error-prone | continuous | CD4 count at ART initiation                         |
+| CD4_val     | validated   | continuous |                                                     |
+| Prior_ART   | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no  |
+| Sex         | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female       |
+| Age         | error-free  | continuous | Age of patient                                      |
 
 We now illustrate how to obtain the SMLEs using the `sleev` package with
 the `mock.vccc` dataset. Specifically, we show how to fit a linear

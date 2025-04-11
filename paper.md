@@ -77,10 +77,9 @@ and efficient as possible.
 
 There are several [R](https://www.r-project.org/) packages that address
 measurement error [@Rlanguage]. A few examples are
-`augSIMEX`[@augSIMEX], `attenuation`[@attenuation], `decon`[@decon],
-`eivtools`[@eivtools], `GLSME`[@GLSME], `mecor`[@mecor],
-`meerva`[@meerva], `mmc`[@mmc], `refitME`[@refitME], and `simex`
-[@SIMEX]. The various R packages reflect many different approaches, such
+`augSIMEX` [@augSIMEX], `attenuation` [@attenuation], `decon` [@decon],
+`eivtools` [@eivtools], `GLSME` [@GLSME], `mecor` [@mecor],
+`meerva` [@meerva], `mmc` [@mmc], `refitME` [@refitME], and `simex` [@SIMEX]. The various R packages reflect many different approaches, such
 as regression calibration [@decon], SIMEX (i.e.,
                                            simulation-extrapolation) [@SIMEX], and moment-based corrections
 [@mecor], to mention a few. Nearly all of these existing R packages deal
@@ -97,7 +96,7 @@ data, the SMLE operates with high efficiency [@tao2021efficient;
 assumptions on the error model, the SMLE is also robust. For example,
 @tao2021efficient performed a set of simulations highlighting the SMLE's
 robustness to different error mechanisms including settings where the
-errors had non-zero mean and were multiplicative. Moreover, the SMLE
+errors had non-zero mean or were multiplicative. Moreover, the SMLE
 allows error-prone outcome and error-prone covariates in the same model.
 Still, in practice these estimators can be difficult to implement, as
 they involve approximating nuisance conditional densities using
@@ -115,13 +114,13 @@ To promote the use of the SMLE, extensive work has been done to create
 analyze two-phase, error-prone data. Specifically, in `sleev` we rewrote
 the core algorithms of `logreg2ph` in C++ to speed up the computation,
 and we unified the syntax across functions. To compare the computational
-times, we set up simulations with the same code in the vignette. The
+times, we set up simulations with the same code in the [vignette](https://github.com/dragontaoran/sleev/blob/main/vignettes/sleev_vignette.pdf). The
 simulations included phase-one and phase-two sample sizes of 2087 and
 835, respectively, and were performed on a 64-bit Linux OS machine with
-8G memory. Across 100 simulations, the previous `logreg2ph` took on
-average 173.19 seconds with a standard deviation of 4.40 seconds, while
-the corresponding new function in `sleev` took 109.92 seconds with a
-standard deviation of 7.91 seconds.
+8G memory. Across 100 simulations, the previous `logreg2ph` took an
+average of 289.44 seconds with a standard deviation of 8.83 seconds to perform the analysis, while
+the corresponding new function in `sleev` only took an average of 122.32 seconds with a
+standard deviation of 8.18 seconds.
 
 
 # SMLE for Linear Regression
@@ -145,7 +144,7 @@ $\pmb{X}^{*}$ could render misleading results [@fuller2009measurement].
 We assume that the joint density of the complete data
 $\left( Y^{*},\pmb{X}^{*},W,\pmb{U} \right)$ takes the form
 
-$$P\left( Y^{*},\pmb{X}^{*},\ W,\ \pmb{U} \right) = P\left( Y^{*}|\pmb{X}^{*},\ W,\ \pmb{U} \right)P\left( W,\ \pmb{U|}\pmb{X}^{*}\  \right)P\left( \pmb{X}^{*} \right)$$
+$$P\left( Y^{*},\pmb{X}^{*},\ W,\ \pmb{U} \right) = P\left( Y^{*}|\pmb{X}^{*},\ W,\ \pmb{U} \right)P\left( W,\ \pmb{U|}\pmb{X}^{*}\right)P\left( \pmb{X}^{*} \right)$$
 
 $$= P_{\pmb{\theta}}\left( Y|X \right)P\left( W,\ \pmb{U}|\pmb{X}^{*} \right)P\left( \pmb{X}^{*} \right),$$
 
@@ -174,7 +173,7 @@ $$+ \sum_{i = 1}^{n}{\left( 1 - V_{i} \right)\log\left\{ \int\int P_{\pmb{\theta
 where $P(\pmb{X}^*)$ is left out, because the error-prone covariates are
 fully observed and thus $P(\pmb{X}^*)$ can simply be estimated
 empirically. We estimate the unknown measurement error model,
-$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ using B-spline
+$P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$, using B-spline
 sieves. Specifically, we approximate
 $P\left( w,\pmb{u}|\pmb{X}_{i}^{*} \right)$ and
 $\log P\left( W_{i},\pmb{U}_{i}|\pmb{X}_{i}^{*} \right)$ by
@@ -248,7 +247,7 @@ this dataset.
 Table 2: Data dictionary for `mock.vccc`
 
 | Name      | Status      | Type       | Description                                         |
-|:-----------------|:------------|:------------|:----------------------------|
+|:----------|:------------|:-----------|:----------------------------------------------------|
 | ID        | error-free  |            | Patient ID                                          |
 | VL_unval  | error-prone | continuous | Viral load (VL) at antiretroviral therapy (ART)     |
 | VL_val    | validated   | continuous | initiation                                          |
@@ -256,7 +255,7 @@ Table 2: Data dictionary for `mock.vccc`
 | ADE_val   | validated   | binary     | ART initiation: 1 - yes, 0 -- no                    |
 | CD4_unval | error-prone | continuous | CD4 count at ART initiation                         |
 | CD4_val   | validated   | continuous |                                                     |
-| prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no  |
+| Prior_ART | error-free  | binary     | Experienced ART before enrollment: 1 - yes, 0 - no  |
 | Sex       | error-free  | binary     | Sex at birth of patient: 1 - male, 0 - female       |
 | Age       | error-free  | continuous | Age of patient                                      |
 
@@ -286,8 +285,8 @@ mock.vccc$VL_unval_l10 <- log10(mock.vccc$VL_unval)
 
 To obtain the SMLEs, we first need to set up the B-spline basis for the
 error-prone covariate `VL_unval_l10` (the transformed VL variable from
-phase one) and `Sex` . The `spline2ph()` function in `sleev` packages
-can set up the B-spline basis, and combine it with the data input for
+phase one) and `Sex` . The `spline2ph()` function in the `sleev` package
+can set up the B-spline basis, and combine it with the input data for
 the final analysis. Here, we use a cubic B-spline basis with the
 `degree = 3` argument. The size of the basis $s_{n}$ is set to be 20,
 specified through the `size = 20` argument. More details regarding order
@@ -346,7 +345,7 @@ Coefficients:
  4.8209166 -0.1413168  0.2727984 
 ```
 
-The `summary()` function for list of class `linear2ph()` returns the
+The `summary()` function for the object of class `linear2ph` returns the
 estimated coefficients, their standard errors, test statistics, and
 p-values as follows:
 

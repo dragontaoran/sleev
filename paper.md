@@ -1,12 +1,12 @@
 ---
-title: 'sleev: An R Package for Semiparametric Likelihood Estimation with Errors in Variables'
+title: 'sleev: an R Package for Semiparametric Likelihood Estimation with Errors in Variables'
 tags:
   - R
   - measurement error
   - "two-phase sampling"
   - nonparametric statistics
   - "B-splines"
-date: "16 September 2024"
+date: "24 April 2025"
 output: pdf_document
 bibliography: paper.bib
 affiliations:

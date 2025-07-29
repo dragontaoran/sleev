@@ -76,7 +76,7 @@ types of data to obtain estimates that have low bias and are as robust
 and efficient as possible.
 
 There are several packages for [R](https://www.r-project.org/) [@Rlanguage] that address
-measurement error , including `augSIMEX` [@augSIMEX], `attenuation` [@attenuation], `decon` [@decon],
+measurement error, including `augSIMEX` [@augSIMEX], `attenuation` [@attenuation], `decon` [@decon],
 `eivtools` [@eivtools], `GLSME` [@GLSME], `mecor` [@mecor],
 `meerva` [@meerva], `mmc` [@mmc], `refitME` [@refitME], and `simex` [@SIMEX]. The various R packages reflect many different approaches, such
 as regression calibration [@decon], SIMEX (i.e.,

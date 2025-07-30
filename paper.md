@@ -229,7 +229,7 @@ functions
 | z        | Column names of error-free covariates in the input dataset.                                                                             |
 | data     | Dataset generated from `sleev::spline2ph()`.                                                                                                                        |
 | hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is `1`.                 |
-| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is `TRUE`.                                  |
+| se       | Standard errors of the parameter estimators will be estimated when set to `TRUE`. The default is `TRUE`.                                  |
 | tol      | Convergence criterion. The default is `0.0001`.                                                                                         |
 | max_iter | Maximum number of iterations in the EM algorithm. The default is `1000`.                                                                |
 | verbose  | Print analysis details when set to `TRUE`. The default is `FALSE`.                                                                      |

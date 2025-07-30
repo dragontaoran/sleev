@@ -217,8 +217,7 @@ user needs to specify the B-spline matrix
 $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ to be used in the estimation
 of the error densities.
 
-### Table 1: Main arguments for the `linear2ph()` and `logistic2ph()`
-functions
+### Table 1: Main arguments for the `linear2ph()` and `logistic2ph()` functions
 
 | Argument | Description|
 |:---------|:--------------------------------------------------|

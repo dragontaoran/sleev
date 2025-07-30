@@ -217,7 +217,7 @@ user needs to specify the B-spline matrix
 $B_{j}^{q}\left( \pmb{X}_{i}^{*} \right)$ to be used in the estimation
 of the error densities.
 
-Table 1: Main arguments for the `linear2ph()` and `logistic2ph()`
+### Table 1: Main arguments for the `linear2ph()` and `logistic2ph()`
 functions
 
 | Argument | Description|
@@ -229,7 +229,7 @@ functions
 | z        | Column names of error-free covariates in the input dataset.                                                                             |
 | data     | Dataset generated from `sleev::spline2ph()`.                                                                                                                        |
 | hn_scale | Scale of the perturbation constant in the variance estimation via the method of profile likelihood. The default is `1`.                 |
-| se       | Standard errors of the parameter estimators will be estimated when set to TRUE. The default is `TRUE`.                                  |
+| se       | Standard errors of the parameter estimators will be estimated when set to `TRUE`. The default is `TRUE`.                                  |
 | tol      | Convergence criterion. The default is `0.0001`.                                                                                         |
 | max_iter | Maximum number of iterations in the EM algorithm. The default is `1000`.                                                                |
 | verbose  | Print analysis details when set to `TRUE`. The default is `FALSE`.                                                                      |
@@ -241,7 +241,7 @@ mimic data from the Vanderbilt Comprehensive Care Clinic (VCCC) patient
 records from @giganti2020accounting. Table 2 describes the variables in
 this dataset.
 
-Table 2: Data dictionary for `mock.vccc`
+### Table 2: Data dictionary for `mock.vccc`
 
 | Name        | Status      | Type       | Description                                         |
 |:------------|:------------|:-----------|:----------------------------------------------------|
@@ -271,7 +271,7 @@ Because of skewness, we often transform both CD4 and VL. In our
 analysis, CD4 was divided by 10 and square root transformed, and VL was
 $\log_{10}$ transformed:
 
-```         
+```R         
 library("sleev")
 data("mock.vccc")
 mock.vccc$CD4_val_sq10 <- sqrt(mock.vccc$CD4_val / 10)
@@ -295,7 +295,7 @@ females, we can set up B-spline basis separately and proportionally for
 the two `Sex` groups by specifying argument `group = "Sex"`. The
 described B-spline basis is constructed as follows.
 
-```         
+```R         
 sn <- 20
 data.linear <- spline2ph(x = "VL_unval_l10", data = mock.vccc, size = sn,
                          degree = 3, group = "Sex")
@@ -313,7 +313,7 @@ fitted SMLEs to the variable name `res_linear`. The list of class
 `linear2ph` contains five components: `coefficient`, `covariance`,
 `sigma`, `converge`, and `converge_cov`.
 
-```         
+```R         
 res_linear <- linear2ph(y_unval = "CD4_unval_sq10", y = "CD4_val_sq10",
                         x_unval = "VL_unval_l10", x = "VL_val_l10", 
                         z = "Sex", data = data.linear,
@@ -325,7 +325,7 @@ We should first check if the EM algorithms for estimating the regression
 coefficients and their covariance matrix converged by using the
 `print()` for class `linear2ph` directly.
 
-```         
+```R         
 > res_linear
 
 Call:
@@ -345,7 +345,7 @@ The `summary()` function for the object of class `linear2ph` returns the
 estimated coefficients, their standard errors, test statistics, and
 $p$-values as follows:
 
-```         
+```R         
 > summary(res_linear)
 
 Call:

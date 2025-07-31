@@ -258,7 +258,7 @@ this dataset.
 We now illustrate how to obtain the SMLEs using the `sleev` package with
 the `mock.vccc` dataset. Specifically, we show how to fit a linear
 regression model in the presence of errors in both the outcome and
-covariates using the linear2ph() function. Situations with more
+covariates using the `linear2ph()` function. Situations with more
 covariates and examples with logistic regression are included in the
 [package vignette](https://github.com/dragontaoran/sleev/blob/main/inst/article/sleev_vignette.pdf).
 

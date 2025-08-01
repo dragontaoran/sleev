@@ -1,5 +1,5 @@
 ---
-title: 'sleev: an R Package for Semiparametric Likelihood Estimation with Errors in Variables'
+title: 'sleev: An R Package for Semiparametric Likelihood Estimation with Errors in Variables'
 tags:
   - R
   - measurement error
